@@ -1,3338 +1,2207 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
-/>
-
-<title>XO Smart AI</title>
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<title>MyCode AI - هوش مصنوعی برنامه نویسی</title>
 
 <style>
 
-/* =========================================
-   RESET
-========================================= */
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-
-  -webkit-tap-highlight-color:transparent;
-  user-select:none;
+:root {
+    color-scheme: dark;
+    --bg: #0b1020;
+    --surface: #121a2b;
+    --surface2: #1b2740;
+    --border: #2a3955;
+    --fg: #eef4ff;
+    --sub: #9aabc6;
+    --accent: #7759f8;
+    --accent2: #9a86ff;
+    --ok: #43d3a0;
+    --danger: #fb7185;
 }
 
-:root{
-
-  --app-height:100dvh;
-
-  --bg:#050817;
-
-  --panel:rgba(20,28,62,.70);
-  --panel2:rgba(255,255,255,.055);
-
-  --border:rgba(255,255,255,.10);
-
-  --text:#ffffff;
-  --muted:#929ab9;
-
-  --x:#7484ff;
-  --o:#ff528f;
-
-  --purple:#7167ff;
+* {
+    box-sizing: border-box;
 }
 
-html,
-body{
-
-  width:100%;
-  height:100%;
-
-  overflow:hidden;
+html, body {
+    height: 100%;
+    margin: 0;
 }
 
-body{
+body {
+    font-family: Tahoma, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    overflow: hidden;
+}
 
-  font-family:
-    Tahoma,
-    Arial,
-    sans-serif;
+button, select, textarea {
+    font: inherit;
+}
 
-  color:var(--text);
+button {
+    cursor: pointer;
+}
 
-  background:
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
 
-    radial-gradient(
-      circle at 15% 5%,
-      rgba(90,73,255,.22),
-      transparent 32%
-    ),
+.app {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
 
-    radial-gradient(
-      circle at 85% 90%,
-      rgba(255,62,142,.13),
-      transparent 35%
-    ),
+/* HEADER */
 
-    linear-gradient(
-      180deg,
-      #030616,
-      #07112c
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 19px;
+}
+
+.brand {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.brand-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font: 700 18px Consolas, monospace;
+    background: linear-gradient(
+        135deg,
+        #7356f7,
+        #3d8cf7
     );
 }
 
-
-/* =========================================
-   GALAXY
-========================================= */
-
-.stars{
-
-  position:fixed;
-
-  inset:0;
-
-  pointer-events:none;
-
-  overflow:hidden;
+.brand h1 {
+    font-size: 19px;
+    margin: 0 0 4px;
 }
 
-.star{
-
-  position:absolute;
-
-  width:2px;
-  height:2px;
-
-  border-radius:50%;
-
-  background:white;
-
-  animation:
-    twinkle
-    2.2s
-    infinite
-    alternate;
+.brand small {
+    font-size: 11px;
+    color: var(--sub);
 }
 
-@keyframes twinkle{
-
-  from{
-
-    opacity:.15;
-
-    transform:
-      scale(.7);
-  }
-
-  to{
-
-    opacity:.9;
-
-    transform:
-      scale(1.35);
-  }
+#connectionStatus {
+    font-size: 11px;
+    color: var(--sub);
+    text-align: left;
+    max-width: 210px;
+    line-height: 1.7;
 }
 
+#connectionStatus.ready {
+    color: var(--ok);
+}
 
-/* =========================================
-   APP
-========================================= */
+/* MODEL BAR */
 
-.app{
+.modelbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    padding: 10px 15px;
+    background: #0f1729;
+    border-bottom: 1px solid var(--border);
+}
 
-  position:relative;
+select,
+.button {
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--fg);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+}
 
-  z-index:2;
+select {
+    flex: 1;
+    min-width: 180px;
+    max-width: 390px;
+    outline: none;
+}
 
-  width:100%;
+.button:hover {
+    filter: brightness(1.14);
+}
 
-  max-width:460px;
+.button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+}
 
-  height:var(--app-height);
+/* PROGRESS */
 
-  margin:auto;
+.progress {
+    height: 3px;
+    background: #253047;
+}
 
-  padding:
-
-    max(
-      8px,
-      env(safe-area-inset-top)
-    )
-
-    11px
-
-    max(
-      9px,
-      env(safe-area-inset-bottom)
+.progress div {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(
+        90deg,
+        var(--accent),
+        #34d399
     );
-
-  display:grid;
-
-  grid-template-rows:
-    auto
-    auto
-    auto
-    minmax(0,1fr)
-    auto;
-
-  gap:7px;
+    transition: width 0.2s;
 }
 
+/* WORKSPACE */
 
-/* =========================================
-   HEADER
-========================================= */
-
-.header{
-
-  min-height:49px;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:space-between;
-
-  gap:8px;
-
-  padding:
-    6px
-    10px;
-
-  border-radius:16px;
-
-  border:
-    1px solid
-    var(--border);
-
-  background:
-    var(--panel);
-
-  backdrop-filter:
-    blur(17px);
+.tabs {
+    display: none;
 }
 
-.header-left{
-
-  display:flex;
-
-  align-items:center;
-
-  gap:9px;
+.workspace {
+    display: grid;
+    grid-template-columns: 42% 58%;
+    flex: 1;
+    min-height: 0;
 }
 
-.logo{
+.chat,
+.codearea {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
 
-  width:36px;
-  height:36px;
+.chat {
+    border-left: 1px solid var(--border);
+}
 
-  border-radius:12px;
+.pane-title {
+    min-height: 52px;
+    padding: 11px 15px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+}
 
-  display:grid;
+.pane-title strong {
+    font-size: 13px;
+}
 
-  place-items:center;
+/* CHAT */
 
-  font-weight:900;
+.messages {
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    padding: 18px 15px;
+}
 
-  font-size:15px;
+.welcome {
+    text-align: center;
+    max-width: 530px;
+    margin: 30px auto;
+    padding: 0 8px;
+}
 
-  background:
+.welcome[hidden] {
+    display: none;
+}
 
-    linear-gradient(
-      135deg,
-      #776bff,
-      #5145da
+.hero {
+    width: 70px;
+    height: 70px;
+    display: grid;
+    place-items: center;
+    border-radius: 20px;
+    margin: 0 auto 20px;
+    background: linear-gradient(
+        135deg,
+        #7250ff,
+        #2788eb
     );
-
-  box-shadow:
-    0 7px 18px
-    rgba(92,76,255,.25);
+    font: 700 29px Consolas, monospace;
 }
 
-.title b{
-
-  display:block;
-
-  font-size:14px;
+.welcome h2 {
+    font-size: 22px;
+    margin: 0 0 12px;
 }
 
-.title span{
-
-  display:block;
-
-  margin-top:2px;
-
-  font-size:8px;
-
-  color:var(--muted);
+.welcome p {
+    font-size: 12px;
+    color: var(--sub);
+    line-height: 2.1;
 }
 
-.header-actions{
-
-  display:flex;
-
-  gap:5px;
+.suggestions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    margin-top: 23px;
 }
 
-.icon-btn{
-
-  width:34px;
-  height:34px;
-
-  border:none;
-
-  border-radius:11px;
-
-  color:white;
-
-  font-size:15px;
-
-  cursor:pointer;
-
-  border:
-    1px solid
-    rgba(255,255,255,.08);
-
-  background:
-    rgba(255,255,255,.065);
+.suggestions button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    padding: 14px 9px;
+    border-radius: 11px;
+    font-size: 12px;
 }
 
-.icon-btn:active{
-
-  transform:
-    scale(.93);
+.suggestions button:hover {
+    border-color: var(--accent);
 }
 
+/* MESSAGES */
 
-/* =========================================
-   SCORE
-========================================= */
-
-.scoreboard{
-
-  display:grid;
-
-  grid-template-columns:
-    repeat(3,minmax(0,1fr));
-
-  gap:5px;
+.message {
+    margin-bottom: 20px;
+    max-width: 100%;
 }
 
-.score{
-
-  min-width:0;
-
-  padding:
-    6px
-    3px;
-
-  border-radius:13px;
-
-  text-align:center;
-
-  border:
-    1px solid
-    var(--border);
-
-  background:
-    var(--panel);
+.message .who {
+    color: var(--accent2);
+    font-size: 11px;
+    margin-bottom: 7px;
 }
 
-.score span{
-
-  display:block;
-
-  color:var(--muted);
-
-  font-size:8px;
+.message.user .who {
+    color: var(--ok);
 }
 
-.score strong{
-
-  display:block;
-
-  margin-top:2px;
-
-  font-size:18px;
+.bubble {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    unicode-bidi: plaintext;
+    line-height: 1.9;
+    padding: 13px;
+    border-radius: 13px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 12px;
 }
 
-.human-score{
-
-  color:var(--x);
+.message.user .bubble {
+    background: #1d2b50;
 }
 
-.ai-score{
-
-  color:var(--o);
+.message.ai .bubble {
+    direction: auto;
 }
 
+/* INPUT */
 
-/* =========================================
-   STATUS
-========================================= */
-
-.status{
-
-  min-height:38px;
-
-  padding:
-    5px
-    8px;
-
-  border-radius:13px;
-
-  border:
-    1px solid
-    var(--border);
-
-  background:
-    var(--panel);
-
-  display:flex;
-
-  justify-content:center;
-
-  align-items:center;
-
-  text-align:center;
-
-  font-size:10px;
-
-  font-weight:bold;
-
-  overflow:hidden;
+.inputbox {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px;
 }
 
-
-/* =========================================
-   THINKING
-========================================= */
-
-.thinking-dots{
-
-  display:inline-flex;
-
-  gap:3px;
-
-  margin-right:6px;
+.inputbox textarea {
+    resize: vertical;
+    width: 100%;
+    min-height: 85px;
+    max-height: 190px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    border-radius: 11px;
+    padding: 12px;
+    outline: none;
+    line-height: 1.8;
+    font-size: 12px;
 }
 
-.thinking-dots i{
-
-  width:4px;
-  height:4px;
-
-  border-radius:50%;
-
-  background:
-    var(--o);
-
-  animation:
-    thinking
-    .7s
-    infinite;
+.inputbox textarea:focus {
+    border-color: var(--accent);
 }
 
-.thinking-dots i:nth-child(2){
-
-  animation-delay:.12s;
+.actionrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 9px;
 }
 
-.thinking-dots i:nth-child(3){
-
-  animation-delay:.24s;
+.actionrow #aiStatus {
+    color: var(--sub);
+    font-size: 11px;
+    line-height: 1.8;
 }
 
-@keyframes thinking{
-
-  0%,
-  100%{
-
-    opacity:.25;
-
-    transform:
-      translateY(0);
-  }
-
-  50%{
-
-    opacity:1;
-
-    transform:
-      translateY(-4px);
-  }
+.send {
+    background: var(--accent);
+    border: 0;
+    border-radius: 9px;
+    color: white;
+    padding: 12px 17px;
+    font-size: 12px;
+    flex-shrink: 0;
 }
 
+/* CODE EDITOR */
 
-/* =========================================
-   BOARD AREA
-========================================= */
-
-.board-area{
-
-  min-height:0;
-
-  width:100%;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
+.codearea {
+    background: #0a1020;
 }
 
-
-/*
-   این قسمت باعث می‌شود
-   مربع‌ها هیچ‌وقت به هم نریزند.
-*/
-
-.board{
-
-  width:
-
-    min(
-      calc(100vw - 22px),
-      calc(var(--app-height) - 205px),
-      410px
-    );
-
-  aspect-ratio:
-    1 / 1;
-
-  display:grid;
-
-  grid-template-columns:
-    repeat(
-      3,
-      minmax(0,1fr)
-    );
-
-  grid-template-rows:
-    repeat(
-      3,
-      minmax(0,1fr)
-    );
-
-  gap:8px;
-
-  flex:none;
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+    padding: 11px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
 }
 
-
-/* =========================================
-   CELL
-========================================= */
-
-.cell{
-
-  width:100%;
-  height:100%;
-
-  min-width:0;
-  min-height:0;
-
-  overflow:hidden;
-
-  display:flex;
-
-  justify-content:center;
-
-  align-items:center;
-
-  border:none;
-
-  border-radius:
-    clamp(
-      14px,
-      4vw,
-      22px
-    );
-
-  border:
-    1px solid
-    var(--border);
-
-  background:
-
-    linear-gradient(
-      145deg,
-      rgba(255,255,255,.09),
-      rgba(255,255,255,.025)
-    );
-
-  backdrop-filter:
-    blur(12px);
-
-  cursor:pointer;
-
-  transition:
-
-    transform .13s,
-    border-color .2s,
-    background .2s,
-    box-shadow .2s;
+.toolbar .filename {
+    font: 12px Consolas, monospace;
+    color: var(--sub);
+    margin-left: auto;
+    direction: ltr;
 }
 
-.cell:active{
-
-  transform:
-    scale(.93);
+#codeEditor {
+    flex: 1;
+    min-height: 120px;
+    width: 100%;
+    resize: none;
+    outline: none;
+    border: 0;
+    background: #0a1020;
+    color: #d8e5fc;
+    padding: 17px;
+    font: 12px/1.8 Consolas, "Courier New", monospace;
+    direction: ltr;
+    text-align: left;
+    tab-size: 4;
 }
 
+/* PREVIEW */
 
-/* =========================================
-   X / O
-========================================= */
-
-.mark{
-
-  font-family:
-    Arial,
-    sans-serif;
-
-  line-height:1;
-
-  font-size:
-
-    clamp(
-      46px,
-      17vw,
-      78px
-    );
-
-  animation:
-
-    markAppear
-    .27s
-    cubic-bezier(
-      .18,
-      1.5,
-      .4,
-      1
-    );
+.preview-title {
+    background: var(--surface);
+    border-block: 1px solid var(--border);
+    padding: 10px 12px;
+    font-size: 12px;
 }
 
-.mark.x{
-
-  color:var(--x);
-
-  text-shadow:
-
-    0 0 22px
-    rgba(116,132,255,.42);
+.preview {
+    width: 100%;
+    height: 33%;
+    min-height: 115px;
+    background: white;
+    border: 0;
 }
 
-.mark.o{
-
-  color:var(--o);
-
-  text-shadow:
-
-    0 0 22px
-    rgba(255,82,143,.42);
-}
-
-@keyframes markAppear{
-
-  from{
-
-    opacity:0;
-
-    transform:
-
-      scale(.15)
-      rotate(-22deg);
-  }
-
-  75%{
-
-    transform:
-      scale(1.10);
-  }
-
-  to{
-
-    opacity:1;
-
-    transform:
-      scale(1);
-  }
-}
-
-
-/* =========================================
-   WIN EFFECT
-========================================= */
-
-.cell.win-x{
-
-  border-color:
-    rgba(116,132,255,.75);
-
-  background:
-    rgba(116,132,255,.13);
-
-  animation:
-    glowX
-    .6s
-    infinite
-    alternate;
-}
-
-.cell.win-o{
-
-  border-color:
-    rgba(255,82,143,.75);
-
-  background:
-    rgba(255,82,143,.13);
-
-  animation:
-    glowO
-    .6s
-    infinite
-    alternate;
-}
-
-@keyframes glowX{
-
-  to{
-
-    transform:
-      scale(.96);
-
-    box-shadow:
-
-      0 0 25px
-      rgba(116,132,255,.55);
-  }
-}
-
-@keyframes glowO{
-
-  to{
-
-    transform:
-      scale(.96);
-
-    box-shadow:
-
-      0 0 25px
-      rgba(255,82,143,.55);
-  }
-}
-
-
-/* =========================================
-   FOOTER
-========================================= */
-
-.footer{
-
-  display:grid;
-
-  grid-template-columns:
-    1fr
-    auto;
-
-  gap:6px;
-}
-
-.new-game{
-
-  height:45px;
-
-  border:none;
-
-  border-radius:14px;
-
-  color:white;
-
-  font-size:12px;
-
-  font-weight:900;
-
-  cursor:pointer;
-
-  background:
-
-    linear-gradient(
-      135deg,
-      #6c70ff,
-      #7d58ef
-    );
-
-  box-shadow:
-
-    0 9px 23px
-    rgba(89,72,230,.22);
-}
-
-.ai-info{
-
-  min-width:80px;
-
-  padding:
-    5px
-    8px;
-
-  border-radius:14px;
-
-  border:
-    1px solid
-    var(--border);
-
-  background:
-    var(--panel);
-
-  display:flex;
-
-  flex-direction:column;
-
-  align-items:center;
-
-  justify-content:center;
-}
-
-.ai-info span{
-
-  font-size:7px;
-
-  color:var(--muted);
-}
-
-.ai-info strong{
-
-  margin-top:1px;
-
-  font-size:9px;
-}
-
-
-/* =========================================
-   RPS MODAL
-========================================= */
-
-.overlay{
-
-  position:fixed;
-
-  inset:0;
-
-  z-index:100;
-
-  display:none;
-
-  align-items:center;
-
-  justify-content:center;
-
-  padding:17px;
-
-  background:
-    rgba(2,5,16,.88);
-
-  backdrop-filter:
-    blur(15px);
-}
-
-.overlay.show{
-
-  display:flex;
-}
-
-.rps-card{
-
-  width:100%;
-
-  max-width:365px;
-
-  padding:
-    22px
-    16px;
-
-  border-radius:25px;
-
-  text-align:center;
-
-  border:
-    1px solid
-    var(--border);
-
-  background:
-
-    linear-gradient(
-      180deg,
-      #151e42,
-      #0f1734
-    );
-
-  box-shadow:
-
-    0 20px 55px
-    rgba(0,0,0,.35);
-
-  animation:
-    modalIn
-    .27s
-    ease;
-}
-
-@keyframes modalIn{
-
-  from{
-
-    opacity:0;
-
-    transform:
-      scale(.87);
-  }
-}
-
-.rps-card h2{
-
-  font-size:19px;
-}
-
-.rps-card p{
-
-  margin-top:5px;
-
-  color:var(--muted);
-
-  font-size:9px;
-}
-
-.rps-buttons{
-
-  display:grid;
-
-  grid-template-columns:
-    repeat(3,1fr);
-
-  gap:7px;
-
-  margin-top:17px;
-}
-
-.rps-btn{
-
-  height:88px;
-
-  border-radius:17px;
-
-  border:
-    1px solid
-    var(--border);
-
-  background:
-    rgba(255,255,255,.06);
-
-  color:white;
-
-  font-size:31px;
-
-  cursor:pointer;
-}
-
-.rps-btn:active{
-
-  transform:
-    scale(.91);
-}
-
-.rps-btn span{
-
-  display:block;
-
-  margin-top:5px;
-
-  font-size:9px;
-
-  color:#b9c0dc;
-}
-
-.rps-result{
-
-  min-height:63px;
-
-  margin-top:15px;
-
-  display:flex;
-
-  flex-direction:column;
-
-  align-items:center;
-
-  justify-content:center;
-
-  gap:7px;
-
-  font-size:11px;
-
-  line-height:1.6;
-}
-
-
-/* =========================================
-   VERY SMALL SCREEN
-========================================= */
-
-@media(max-height:650px){
-
-  .app{
-
-    gap:5px;
-
-    padding-top:5px;
-
-    padding-bottom:5px;
-  }
-
-  .header{
-
-    min-height:40px;
-  }
-
-  .logo{
-
-    width:30px;
-    height:30px;
-  }
-
-  .title span{
-
-    display:none;
-  }
-
-  .status{
-
-    min-height:30px;
-
-    font-size:9px;
-  }
-
-  .board{
-
-    width:
-
-      min(
-        calc(100vw - 26px),
-        calc(var(--app-height) - 165px),
-        330px
-      );
-  }
-
-  .new-game{
-
-    height:39px;
-  }
-
-}
-
-
-/* =========================================
-   EXTREMELY SHORT SCREEN
-========================================= */
-
-@media(max-height:540px){
-
-  .status{
-
-    display:none;
-  }
-
-  .board{
-
-    width:
-
-      min(
-        calc(100vw - 28px),
-        calc(var(--app-height) - 115px),
-        300px
-      );
-  }
+/* MOBILE */
+
+@media(max-width:800px) {
+
+    header {
+        padding: 10px 12px;
+    }
+
+    .brand-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+    .brand h1 {
+        font-size: 16px;
+    }
+
+    .brand small {
+        font-size: 10px;
+    }
+
+    #connectionStatus {
+        font-size: 10px;
+        max-width: 140px;
+    }
+
+    .workspace {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tabs {
+        display: flex;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .tabs button {
+        background: transparent;
+        border: 0;
+        flex: 1;
+        color: var(--sub);
+        padding: 13px;
+    }
+
+    .tabs button.active {
+        color: white;
+        border-bottom: 2px solid var(--accent);
+    }
+
+    .chat,
+    .codearea {
+        flex: 1;
+    }
+
+    .codearea {
+        display: none;
+    }
+
+    .workspace.show-code .chat {
+        display: none;
+    }
+
+    .workspace.show-code .codearea {
+        display: flex;
+    }
+
+    .messages {
+        padding: 12px;
+    }
+
+    .welcome {
+        margin: 20px auto;
+    }
+
+    .suggestions {
+        gap: 8px;
+    }
+
+    .preview {
+        height: 32%;
+    }
 
 }
 
 </style>
+
 </head>
 
 <body>
 
-
-<!-- =====================================
-     GALAXY
-===================================== -->
-
-<div
-  class="stars"
-  id="stars"
-></div>
-
-
-
-<!-- =====================================
-     APP
-===================================== -->
-
 <div class="app">
 
+<header>
 
-  <!-- HEADER -->
+    <div class="brand">
 
-  <header class="header">
+        <div class="brand-icon">
+            &lt;/&gt;
+        </div>
 
-    <div class="header-left">
-
-      <div class="logo">
-        XO
-      </div>
-
-      <div class="title">
-
-        <b>
-          XO Smart AI
-        </b>
-
-        <span>
-          هوش مصنوعی شکست‌ناپذیر و یادگیرنده
-        </span>
-
-      </div>
+        <div>
+            <h1>MyCode AI</h1>
+            <small>
+                هوش مصنوعی شخصی برنامه‌نویسی
+            </small>
+        </div>
 
     </div>
 
+    <span id="connectionStatus">
+        مدل بارگذاری نشده
+    </span>
 
-    <div class="header-actions">
-
-      <button
-        class="icon-btn"
-        onclick="resetAIMemory()"
-        title="پاک کردن حافظه AI"
-      >
-        🧠
-      </button>
+</header>
 
 
-      <button
-        class="icon-btn"
-        onclick="newRound()"
-      >
-        ↻
-      </button>
+<!-- MODEL SELECTION -->
 
-    </div>
+<div class="modelbar">
 
-  </header>
+    <select id="modelSelect">
 
+        <option value="coder">
+            Qwen2.5 Coder 0.5B - مخصوص کدنویسی
+        </option>
 
+        <option value="light">
+            SmolLM2 135M - مدل سبک گوشی
+        </option>
 
-  <!-- SCORE -->
-
-  <section class="scoreboard">
-
-    <div class="score">
-
-      <span>
-        شما ❌
-      </span>
-
-      <strong
-        class="human-score"
-        id="humanScore"
-      >
-        0
-      </strong>
-
-    </div>
-
-
-    <div class="score">
-
-      <span>
-        مساوی
-      </span>
-
-      <strong
-        id="drawScore"
-      >
-        0
-      </strong>
-
-    </div>
-
-
-    <div class="score">
-
-      <span>
-        AI ⭕
-      </span>
-
-      <strong
-        class="ai-score"
-        id="aiScore"
-      >
-        0
-      </strong>
-
-    </div>
-
-  </section>
-
-
-
-  <!-- STATUS -->
-
-  <div
-    class="status"
-    id="status"
-  >
-    تعیین شروع‌کننده...
-  </div>
-
-
-
-  <!-- BOARD -->
-
-  <main class="board-area">
-
-    <div
-      class="board"
-      id="board"
-    ></div>
-
-  </main>
-
-
-
-  <!-- FOOTER -->
-
-  <footer class="footer">
+    </select>
 
     <button
-      class="new-game"
-      onclick="newRound()"
+        id="loadBtn"
+        class="button primary"
     >
-      بازی جدید
+        فعال‌سازی هوش مصنوعی
     </button>
 
+</div>
 
-    <div class="ai-info">
 
-      <span>
-        بازی‌های یادگرفته‌شده
-      </span>
+<div class="progress">
+    <div id="progressFill"></div>
+</div>
 
-      <strong
-        id="learnedGames"
-      >
-        0
-      </strong>
 
-    </div>
+<!-- MOBILE TABS -->
 
-  </footer>
+<div class="tabs">
 
+    <button id="chatTab" class="active">
+        گفتگو
+    </button>
+
+    <button id="codeTab">
+        ویرایشگر کد
+    </button>
 
 </div>
 
 
+<!-- MAIN WORKSPACE -->
 
-<!-- =====================================
-     ROCK PAPER SCISSORS
-===================================== -->
-
-<div
-  class="overlay"
-  id="rpsOverlay"
->
-
-  <div class="rps-card">
-
-    <h2>
-      ✊ سنگ، کاغذ، قیچی
-    </h2>
-
-    <p>
-      برنده مشخص می‌کند چه کسی دوز را شروع کند
-    </p>
+<main class="workspace" id="workspace">
 
 
-    <div class="rps-buttons">
+<!-- CHAT PANEL -->
 
+<section class="chat">
 
-      <button
-        class="rps-btn"
-        onclick="playRPS('rock')"
-      >
-        ✊
-        <span>
-          سنگ
-        </span>
-      </button>
+    <div class="pane-title">
 
+        <strong>
+            گفتگو با MyCode AI
+        </strong>
 
-      <button
-        class="rps-btn"
-        onclick="playRPS('paper')"
-      >
-        ✋
-        <span>
-          کاغذ
-        </span>
-      </button>
-
-
-      <button
-        class="rps-btn"
-        onclick="playRPS('scissors')"
-      >
-        ✌️
-        <span>
-          قیچی
-        </span>
-      </button>
-
+        <button id="clearBtn" class="button">
+            گفتگوی جدید
+        </button>
 
     </div>
 
 
-    <div
-      class="rps-result"
-      id="rpsResult"
-    >
-      یکی رو انتخاب کن 👆
+    <div id="messages" class="messages">
+
+        <div id="welcome" class="welcome">
+
+            <div class="hero">
+                &lt;/&gt;
+            </div>
+
+            <h2>
+                چه برنامه‌ای بسازیم؟
+            </h2>
+
+            <p>
+                هوش مصنوعی شخصی مخصوص برنامه‌نویسی
+                <br>
+                بدون نیاز به API و WebGPU
+                <br>
+                با پردازنده گوشی کار می‌کند.
+            </p>
+
+
+            <div class="suggestions">
+
+                <button
+                    data-suggest="یک بازی مار کامل با HTML و CSS و JavaScript بساز"
+                >
+                    ساخت بازی مار
+                </button>
+
+                <button
+                    data-suggest="یک ماشین حساب زیبا با HTML و CSS و JavaScript بساز"
+                >
+                    ساخت ماشین حساب
+                </button>
+
+                <button
+                    data-suggest="یک سایت فروشگاهی واکنش گرا با HTML بساز"
+                >
+                    ساخت فروشگاه
+                </button>
+
+                <button
+                    data-suggest="یک برنامه ماشین حساب با Python بنویس"
+                >
+                    برنامه Python
+                </button>
+
+            </div>
+
+        </div>
+
     </div>
 
-  </div>
+
+    <!-- MESSAGE INPUT -->
+
+    <div class="inputbox">
+
+        <textarea
+            id="prompt"
+            placeholder="مثلاً: یک بازی دوز با HTML بساز که بتوانم با کامپیوتر بازی کنم..."
+        ></textarea>
+
+        <div class="actionrow">
+
+            <span id="aiStatus">
+                ابتدا مدل را فعال کن.
+            </span>
+
+            <button class="send" id="sendBtn">
+                ارسال ↑
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- CODE PANEL -->
+
+<section class="codearea">
+
+    <div class="toolbar">
+
+        <span class="filename" id="codeTitle">
+            index.html
+        </span>
+
+        <button id="copyBtn" class="button">
+            کپی
+        </button>
+
+        <button id="downloadBtn" class="button">
+            دانلود
+        </button>
+
+        <button id="runBtn" class="button primary">
+            اجرای HTML
+        </button>
+
+    </div>
+
+
+    <textarea
+        spellcheck="false"
+        id="codeEditor"
+        placeholder="// کدهای تولیدشده اینجا نمایش داده می‌شوند..."
+    ></textarea>
+
+
+    <div class="preview-title">
+        پیش‌نمایش HTML
+    </div>
+
+    <iframe
+        class="preview"
+        id="preview"
+        title="پیش‌نمایش HTML"
+        sandbox="allow-scripts"
+        referrerpolicy="no-referrer"
+    ></iframe>
+
+</section>
+
+</main>
 
 </div>
 
 
+<!-- ======================================
+     AI ENGINE - CPU VERSION
+====================================== -->
 
-<script>
+<script type="module">
 
-/* =========================================
-   TELEGRAM VIEWPORT
-========================================= */
+/* ======================================
+   HTML ELEMENTS
+====================================== */
 
-function updateViewportHeight(){
+const $ = id => document.getElementById(id);
 
-  let height =
-    window.innerHeight;
+const els = {
 
+    messages: $("messages"),
 
-  try{
+    prompt: $("prompt"),
 
-    if(
-      window.Telegram
-      ?.WebApp
-      ?.viewportStableHeight
-    ){
+    editor: $("codeEditor"),
 
-      height =
-        Telegram
-        .WebApp
-        .viewportStableHeight;
+    send: $("sendBtn"),
 
-    }
+    load: $("loadBtn"),
 
-  }
-  catch(e){}
+    model: $("modelSelect"),
 
+    status: $("aiStatus"),
 
-  document
-    .documentElement
-    .style
-    .setProperty(
-      "--app-height",
-      height+"px"
-    );
+    connection: $("connectionStatus"),
 
-}
+    progress: $("progressFill"),
 
+    preview: $("preview"),
 
-updateViewportHeight();
-
-
-window.addEventListener(
-  "resize",
-  updateViewportHeight
-);
-
-
-try{
-
-  Telegram.WebApp.ready();
-
-  Telegram.WebApp.expand();
-
-}
-catch(e){}
-
-
-
-/* =========================================
-   GALAXY
-========================================= */
-
-const stars =
-  document.getElementById(
-    "stars"
-  );
-
-
-for(
-  let i=0;
-  i<65;
-  i++
-){
-
-  const star =
-    document.createElement(
-      "i"
-    );
-
-
-  star.className =
-    "star";
-
-
-  star.style.left =
-    Math.random()*100
-    +"%";
-
-
-  star.style.top =
-    Math.random()*100
-    +"%";
-
-
-  star.style.animationDelay =
-    Math.random()*3
-    +"s";
-
-
-  const size =
-    1+Math.random()*1.5;
-
-
-  star.style.width =
-    size+"px";
-
-
-  star.style.height =
-    size+"px";
-
-
-  stars.appendChild(
-    star
-  );
-
-}
-
-
-
-/* =========================================
-   CONSTANTS
-========================================= */
-
-const HUMAN =
-  "X";
-
-
-const AI =
-  "O";
-
-
-const WIN_LINES = [
-
-  [0,1,2],
-  [3,4,5],
-  [6,7,8],
-
-  [0,3,6],
-  [1,4,7],
-  [2,5,8],
-
-  [0,4,8],
-  [2,4,6]
-
-];
-
-
-
-/* =========================================
-   GAME VARIABLES
-========================================= */
-
-let board =
-  Array(9).fill("");
-
-
-let gameActive =
-  false;
-
-
-let aiThinking =
-  false;
-
-
-let rpsLocked =
-  false;
-
-
-let gameRecorded =
-  false;
-
-
-let scores = {
-
-  human:0,
-  ai:0,
-  draw:0
+    title: $("codeTitle")
 
 };
 
 
+/* ======================================
+   LOCAL AI MODELS
+====================================== */
 
-/* =========================================
-   AI MEMORY
-========================================= */
+const MODEL_CODER =
+    "onnx-community/Qwen2.5-Coder-0.5B-Instruct";
 
-/*
+const MODEL_LIGHT =
+    "onnx-community/SmolLM2-135M-Instruct-ONNX";
 
-ساختار حافظه:
 
-{
-  games: 20,
+/* ======================================
+   AI VARIABLES
+====================================== */
 
-  states: {
+let generator = null;
 
-    "X...O....": {
-      "1": 4,
-      "5": 7,
-      "8": 2
-    }
+let transformers = null;
 
-  }
+let currentModel = null;
+
+let busy = false;
+
+let loading = false;
+
+let history = [];
+
+let language = "html";
+
+
+/* ======================================
+   PERSONAL AI INSTRUCTIONS
+====================================== */
+
+const systemPrompt = `
+
+You are MyCode AI.
+
+You are a personal artificial intelligence
+specialized in software engineering.
+
+Your primary job is writing computer code.
+
+You understand:
+
+HTML
+CSS
+JavaScript
+Python
+C++
+PHP
+SQL
+
+Rules:
+
+1. Write actual working code.
+
+2. Do not provide pseudocode when
+the user requests a working program.
+
+3. When HTML is requested,
+generate a complete HTML file.
+
+4. Include CSS and JavaScript
+inside the HTML file when needed.
+
+5. Always place source code inside
+markdown code fences.
+
+6. Use correct language identifiers.
+
+7. When the user asks for modifications,
+provide the complete updated code.
+
+8. Help the user identify errors.
+
+9. Respond in Persian when the user
+speaks Persian.
+
+10. Do not falsely claim that code
+has been tested.
+
+11. Keep explanations concise.
+
+12. You are MyCode AI,
+a personal coding assistant.
+
+`;
+
+
+/* ======================================
+   STATUS MANAGEMENT
+====================================== */
+
+function setStatus(text) {
+
+    els.status.textContent = text;
+
 }
 
-یعنی:
 
-وقتی صفحه در یک وضعیت خاص بوده،
-کاربر بیشتر کدام خانه را انتخاب کرده؟
-*/
+function scrollDown() {
 
+    els.messages.scrollTop =
+        els.messages.scrollHeight;
 
-const MEMORY_KEY =
-  "xo_smart_ai_memory_v1";
+}
 
 
-let aiMemory =
-  loadMemory();
+/* ======================================
+   ADD CHAT MESSAGE
+====================================== */
+
+function message(role, text) {
+
+    const row = document.createElement("div");
+
+    row.className = "message " + role;
 
 
+    const who = document.createElement("div");
 
-function loadMemory(){
+    who.className = "who";
 
-  try{
-
-    const saved =
-      localStorage.getItem(
-        MEMORY_KEY
-      );
+    who.textContent =
+        role === "user"
+        ? "شما"
+        : "MyCode AI";
 
 
-    if(saved){
+    const body = document.createElement("div");
 
-      const parsed =
-        JSON.parse(
-          saved
+    body.className = "bubble";
+
+    body.textContent = text;
+
+
+    row.append(who, body);
+
+    els.messages.append(row);
+
+    scrollDown();
+
+    return body;
+
+}
+
+
+/* ======================================
+   SAVE MEMORY
+====================================== */
+
+function save() {
+
+    try {
+
+        localStorage.setItem(
+
+            "mycode_v1_history",
+
+            JSON.stringify(history.slice(-12))
+
         );
 
 
-      return{
+        localStorage.setItem(
 
-        games:
-          parsed.games
-          ||
-          0,
+            "mycode_v1_editor",
 
-        states:
-          parsed.states
-          ||
-          {}
+            els.editor.value.slice(0, 250000)
 
-      };
+        );
+
+
+        localStorage.setItem(
+
+            "mycode_v1_lang",
+
+            language
+
+        );
 
     }
 
-  }
-  catch(e){}
+    catch (error) {
 
+        console.warn("Storage:", error);
 
-  return{
-
-    games:0,
-
-    states:{}
-
-  };
+    }
 
 }
 
 
+/* ======================================
+   RESTORE MEMORY
+====================================== */
 
-function saveMemory(){
+function restore() {
 
-  try{
+    try {
 
-    localStorage.setItem(
+        const saved = JSON.parse(
 
-      MEMORY_KEY,
+            localStorage.getItem(
+                "mycode_v1_history"
+            ) || "[]"
 
-      JSON.stringify(
-        aiMemory
-      )
-
-    );
-
-  }
-  catch(e){}
+        );
 
 
-  updateAIInfo();
+        if (Array.isArray(saved)) {
 
-}
+            history = saved.filter(item =>
 
+                item &&
 
+                ["user", "assistant"].includes(item.role) &&
 
-function resetAIMemory(){
+                typeof item.content === "string"
 
-  const sure =
-    confirm(
-      "حافظه هوش مصنوعی پاک شود؟"
-    );
-
-
-  if(!sure)
-    return;
+            ).slice(-12);
 
 
-  aiMemory = {
+            if (history.length) {
 
-    games:0,
-
-    states:{}
-
-  };
+                $("welcome").hidden = true;
 
 
-  saveMemory();
+                history.forEach(item => {
+
+                    message(
+
+                        item.role === "user"
+                            ? "user"
+                            : "ai",
+
+                        item.content
+
+                    );
+
+                });
+
+            }
+
+        }
 
 
-  setStatus(
-    "🧠 حافظه AI پاک شد"
-  );
-
-}
-
+        els.editor.value =
+            localStorage.getItem(
+                "mycode_v1_editor"
+            ) || "";
 
 
-/* =========================================
-   BOARD KEY
-========================================= */
-
-function boardKey(
-  state
-){
-
-  return state
-    .map(
-      cell =>
-        cell===""
-        ? "."
-        : cell
-    )
-    .join("");
-
-}
+        language =
+            localStorage.getItem(
+                "mycode_v1_lang"
+            ) || "html";
 
 
+        updateFileName();
 
-/* =========================================
-   RECORD HUMAN MOVE
-========================================= */
+    }
 
-function rememberHumanMove(
-  stateBeforeMove,
-  move
-){
+    catch (error) {
 
-  const key =
-    boardKey(
-      stateBeforeMove
-    );
+        console.warn("Restore:", error);
 
-
-  if(
-    !aiMemory.states[key]
-  ){
-
-    aiMemory.states[key] =
-      {};
-
-  }
-
-
-  if(
-    !aiMemory.states[key][move]
-  ){
-
-    aiMemory.states[key][move] =
-      0;
-
-  }
-
-
-  aiMemory.states[key][move]++;
-
-
-  saveMemory();
+    }
 
 }
 
 
+/* ======================================
+   CODE FILE NAME
+====================================== */
 
-/* =========================================
-   BUILD BOARD
-========================================= */
+function updateFileName() {
 
-function createBoard(){
+    const extensions = {
 
-  const boardElement =
-    document.getElementById(
-      "board"
-    );
+        html: "html",
 
+        htm: "html",
 
-  boardElement.innerHTML =
-    "";
+        js: "js",
 
+        javascript: "js",
 
-  for(
-    let i=0;
-    i<9;
-    i++
-  ){
+        py: "py",
 
-    const cell =
-      document.createElement(
-        "button"
-      );
+        python: "py",
 
+        css: "css",
 
-    cell.className =
-      "cell";
+        cpp: "cpp",
 
+        "c++": "cpp",
 
-    cell.dataset.index =
-      i;
+        php: "php",
+
+        json: "json",
+
+        sql: "sql"
+
+    };
 
 
-    cell.onclick =
-      ()=>humanMove(
-        i
-      );
+    const extension =
+        extensions[language] || "txt";
 
 
-    boardElement.appendChild(
-      cell
-    );
-
-  }
+    els.title.textContent =
+        "mycode-project." + extension;
 
 }
 
 
+/* ======================================
+   EXTRACT GENERATED CODE
+====================================== */
 
-/* =========================================
-   NEW ROUND
-========================================= */
+function extractCode(text) {
 
-function newRound(){
+    const blocks = [
 
-  board =
-    Array(9).fill("");
+        ...text.matchAll(
+            /```([^\r\n`]*)\r?\n([\s\S]*?)```/g
+        )
 
-
-  gameActive =
-    false;
-
-
-  aiThinking =
-    false;
-
-
-  rpsLocked =
-    false;
-
-
-  gameRecorded =
-    false;
-
-
-  createBoard();
-
-
-  setStatus(
-    "سنگ، کاغذ، قیچی برای تعیین شروع‌کننده"
-  );
-
-
-  document.getElementById(
-    "rpsResult"
-  ).innerHTML =
-    "یکی رو انتخاب کن 👆";
-
-
-  document
-    .getElementById(
-      "rpsOverlay"
-    )
-    .classList.add(
-      "show"
-    );
-
-}
-
-
-
-/* =========================================
-   RPS
-========================================= */
-
-function playRPS(
-  human
-){
-
-  if(
-    rpsLocked
-  )
-    return;
-
-
-  rpsLocked =
-    true;
-
-
-  const choices = [
-
-    "rock",
-    "paper",
-    "scissors"
-
-  ];
-
-
-  /*
-    کاملاً رندوم
-  */
-
-  const bot =
-
-    choices[
-      Math.floor(
-        Math.random()
-        *
-        choices.length
-      )
     ];
 
 
-  const icons = {
+    if (blocks.length) {
 
-    rock:"✊",
+        const selected =
 
-    paper:"✋",
+            blocks.find(block =>
 
-    scissors:"✌️"
+                /^html\s*$/i.test(block[1])
 
-  };
-
-
-  const box =
-    document.getElementById(
-      "rpsResult"
-    );
+            ) || blocks[0];
 
 
-  box.innerHTML =
-    "🤖 ربات در حال انتخاب...";
+        language = (
+
+            selected[1]
+                .trim()
+                .split(/\s+/)[0] || "txt"
+
+        ).toLowerCase();
 
 
-  setTimeout(
-    ()=>{
+        els.editor.value =
+            selected[2].trim();
 
-      const result =
-        rpsWinner(
-          human,
-          bot
+
+        updateFileName();
+
+        save();
+
+        return true;
+
+    }
+
+
+    const isHTML =
+        /^\s*<(?:!doctype\s+html|html)[\s>]/i.test(text);
+
+
+    if (isHTML) {
+
+        language = "html";
+
+        els.editor.value = text.trim();
+
+        updateFileName();
+
+        save();
+
+        return true;
+
+    }
+
+
+    return false;
+
+}
+
+
+/* ======================================
+   LOAD AI MODEL USING CPU
+====================================== */
+
+async function loadModel() {
+
+    if (busy || loading) {
+        return;
+    }
+
+
+    if (!window.isSecureContext) {
+
+        setStatus(
+            "صفحه باید با HTTPS اجرا شود."
         );
-
-
-      box.innerHTML = `
-
-        <div
-          style="
-            font-size:30px;
-            direction:ltr
-          "
-        >
-
-          ${icons[human]}
-
-          &nbsp; VS &nbsp;
-
-          ${icons[bot]}
-
-        </div>
-
-      `;
-
-
-      /* DRAW */
-
-      if(
-        result==="draw"
-      ){
-
-        box.innerHTML +=
-          "<b>🤝 مساوی شد؛ دوباره انتخاب کن</b>";
-
-
-        rpsLocked =
-          false;
-
 
         return;
 
-      }
+    }
 
 
-      /* HUMAN START */
+    loading = true;
 
-      if(
-        result==="human"
-      ){
+    els.load.disabled = true;
 
-        box.innerHTML +=
-          "<b>🔥 تو شروع می‌کنی</b>";
+    els.send.disabled = true;
 
-
-        setTimeout(
-          ()=>{
-
-            closeRPS();
+    els.model.disabled = true;
 
 
-            gameActive =
-              true;
+    els.connection.classList.remove("ready");
+
+    els.connection.textContent =
+        "در حال آماده‌سازی مدل CPU...";
+
+
+    setStatus(
+        "در حال آماده‌سازی موتور هوش مصنوعی..."
+    );
+
+
+    els.progress.style.width = "0%";
+
+
+    try {
+
+        /* IMPORT TRANSFORMERS.JS */
+
+        if (!transformers) {
+
+            transformers = await import(
+
+                "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1"
+
+            );
+
+        }
+
+
+        /* CONFIGURE CPU */
+
+        transformers.env.allowLocalModels = false;
+
+
+        transformers.env.backends.onnx.wasm.numThreads = 1;
+
+
+        /* SELECT MODEL */
+
+        const selected =
+
+            els.model.value === "coder"
+
+            ? MODEL_CODER
+
+            : MODEL_LIGHT;
+
+
+        generator = null;
+
+        currentModel = null;
+
+
+        setStatus(
+            "در حال دانلود مدل هوش مصنوعی..."
+        );
+
+
+        /* CREATE AI PIPELINE */
+
+        generator = await transformers.pipeline(
+
+            "text-generation",
+
+            selected,
+
+            {
+
+                dtype: "q4",
+
+                device: "wasm",
+
+                progress_callback: progress => {
+
+                    if (
+
+                        progress.status === "progress" &&
+
+                        Number.isFinite(progress.progress)
+
+                    ) {
+
+                        const percent = Math.max(
+
+                            0,
+
+                            Math.min(
+
+                                100,
+
+                                Math.round(progress.progress)
+
+                            )
+
+                        );
+
+
+                        els.progress.style.width =
+                            percent + "%";
+
+
+                        setStatus(
+
+                            "در حال دریافت مدل: " +
+
+                            percent +
+
+                            "٪ — " +
+
+                            (progress.file || "")
+
+                        );
+
+                    }
+
+                    else if (progress.status === "done") {
+
+                        setStatus(
+
+                            "فایل دریافت شد؛ " +
+
+                            "در حال آماده‌سازی هوش مصنوعی..."
+
+                        );
+
+                    }
+
+                }
+
+            }
+
+        );
+
+
+        /* MODEL READY */
+
+        currentModel = selected;
+
+
+        els.progress.style.width = "100%";
+
+
+        els.connection.textContent =
+            "● هوش مصنوعی فعال است";
+
+
+        els.connection.classList.add("ready");
+
+
+        els.load.textContent =
+            "مدل فعال شد";
+
+
+        setStatus(
+
+            "هوش مصنوعی آماده کدنویسی است."
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+
+        generator = null;
+
+        currentModel = null;
+
+
+        els.connection.textContent =
+            "خطا در فعال‌سازی";
+
+
+        els.connection.classList.remove("ready");
+
+
+        setStatus(
+
+            "خطا در بارگذاری مدل: " +
+
+            (error.message || String(error)) +
+
+            " — اینترنت و حافظه گوشی را بررسی کن."
+
+        );
+
+
+        els.load.textContent =
+            "تلاش مجدد";
+
+    }
+
+    finally {
+
+        loading = false;
+
+        els.load.disabled = false;
+
+        els.send.disabled = false;
+
+        els.model.disabled = false;
+
+    }
+
+}
+
+
+/* ======================================
+   GENERATE AI RESPONSE
+====================================== */
+
+async function sendMessage() {
+
+    if (busy || loading) {
+        return;
+    }
+
+
+    const selected =
+
+        els.model.value === "coder"
+
+        ? MODEL_CODER
+
+        : MODEL_LIGHT;
+
+
+    if (
+
+        !generator ||
+
+        currentModel !== selected
+
+    ) {
+
+        setStatus(
+
+            "ابتدا مدل انتخاب‌شده را فعال کن."
+
+        );
+
+        return;
+
+    }
+
+
+    const text =
+        els.prompt.value.trim();
+
+
+    if (!text) {
+        return;
+    }
+
+
+    busy = true;
+
+    els.send.disabled = true;
+
+    els.load.disabled = true;
+
+    els.model.disabled = true;
+
+
+    $("welcome").hidden = true;
+
+
+    message("user", text);
+
+
+    els.prompt.value = "";
+
+
+    const previous = [...history];
+
+
+    history.push({
+
+        role: "user",
+
+        content: text
+
+    });
+
+
+    const outputBubble = message(
+
+        "ai",
+
+        "در حال تولید پاسخ..."
+
+    );
+
+
+    setStatus(
+
+        "هوش مصنوعی با CPU گوشی " +
+
+        "در حال تولید کد است..."
+
+    );
+
+
+    try {
+
+        /* PREPARE CHAT MEMORY */
+
+        const conversation = history
+
+            .slice(-4)
+
+            .map(item => ({
+
+                role: item.role,
+
+                content: item.content.slice(0, 1800)
+
+            }));
+
+
+        /* INCLUDE EXISTING CODE
+           WHEN USER REQUESTS EDITS */
+
+        const editRequested =
+
+            /(اصلاح|تغییر|بروزرسان|باگ|خطا|fix|edit|modify)/i
+
+            .test(text);
+
+
+        if (
+
+            els.editor.value.trim() &&
+
+            editRequested
+
+        ) {
+
+            conversation[
+                conversation.length - 1
+            ] = {
+
+                role: "user",
+
+                content:
+
+                    "Current code:\n```" +
+
+                    language +
+
+                    "\n" +
+
+                    els.editor.value.slice(0, 2500) +
+
+                    "\n```\nRequest: " +
+
+                    text
+
+            };
+
+        }
+
+
+        /* ASK LOCAL AI */
+
+        const result = await generator(
+
+            [
+
+                {
+
+                    role: "system",
+
+                    content: systemPrompt
+
+                },
+
+                ...conversation
+
+            ],
+
+            {
+
+                max_new_tokens:
+
+                    els.model.value === "coder"
+
+                    ? 420
+
+                    : 280,
+
+                do_sample: false,
+
+                return_full_text: true
+
+            }
+
+        );
+
+
+        /* EXTRACT AI RESPONSE */
+
+        const generated =
+            result?.[0]?.generated_text;
+
+
+        const output =
+
+            Array.isArray(generated)
+
+            ? String(
+
+                generated[
+                    generated.length - 1
+                ]?.content || ""
+
+            )
+
+            : typeof generated === "string"
+
+                ? generated
+
+                : "";
+
+
+        if (!output.trim()) {
+
+            throw new Error(
+
+                "مدل پاسخی تولید نکرد."
+
+            );
+
+        }
+
+
+        outputBubble.textContent = output;
+
+
+        scrollDown();
+
+
+        /* SAVE CHAT HISTORY */
+
+        history.push({
+
+            role: "assistant",
+
+            content: output
+
+        });
+
+
+        /* UPDATE CODE EDITOR */
+
+        const hasCode =
+            extractCode(output);
+
+
+        if (hasCode) {
+
+            setStatus(
+
+                "کد تولید شد. " +
+
+                "تب ویرایشگر کد را باز کن."
+
+            );
+
+        }
+
+        else {
+
+            setStatus(
+
+                "پاسخ هوش مصنوعی دریافت شد."
+
+            );
+
+        }
+
+
+        save();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+
+        outputBubble.textContent =
+
+            "خطا در تولید پاسخ:\n" +
+
+            (error.message || String(error));
+
+
+        history = previous;
+
+
+        setStatus(
+
+            "تولید پاسخ ناموفق بود."
+
+        );
+
+
+        save();
+
+    }
+
+    finally {
+
+        busy = false;
+
+        els.send.disabled = false;
+
+        els.load.disabled = false;
+
+        els.model.disabled = false;
+
+    }
+
+}
+
+
+/* ======================================
+   RUN HTML CODE
+====================================== */
+
+function runCode() {
+
+    const code =
+        els.editor.value.trim();
+
+
+    if (!code) {
+
+        setStatus(
+
+            "کدی برای اجرا وجود ندارد."
+
+        );
+
+        return;
+
+    }
+
+
+    if (
+
+        language !== "html" &&
+
+        language !== "htm"
+
+    ) {
+
+        setStatus(
+
+            "در این نسخه فقط HTML اجرا می‌شود."
+
+        );
+
+        return;
+
+    }
+
+
+    els.preview.srcdoc = code;
+
+
+    setStatus(
+
+        "پیش‌نمایش HTML اجرا شد."
+
+    );
+
+}
+
+
+/* ======================================
+   DOWNLOAD GENERATED CODE
+====================================== */
+
+function downloadCode() {
+
+    const text =
+        els.editor.value;
+
+
+    if (!text.trim()) {
+
+        setStatus(
+
+            "ابتدا یک کد تولید کن."
+
+        );
+
+        return;
+
+    }
+
+
+    updateFileName();
+
+
+    const blob = new Blob(
+
+        [text],
+
+        {
+
+            type: "text/plain;charset=utf-8"
+
+        }
+
+    );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const link =
+        document.createElement("a");
+
+
+    link.href = url;
+
+
+    link.download =
+        els.title.textContent;
+
+
+    document.body.append(link);
+
+
+    link.click();
+
+
+    link.remove();
+
+
+    setTimeout(() => {
+
+        URL.revokeObjectURL(url);
+
+    }, 1000);
+
+
+    setStatus(
+
+        "فایل کد ذخیره شد."
+
+    );
+
+}
+
+
+/* ======================================
+   COPY CODE
+====================================== */
+
+async function copyCode() {
+
+    const code =
+        els.editor.value;
+
+
+    if (!code.trim()) {
+
+        setStatus(
+            "کدی برای کپی وجود ندارد."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        await navigator.clipboard.writeText(code);
+
+
+        setStatus(
+            "کد کپی شد."
+        );
+
+    }
+
+    catch (error) {
+
+        setStatus(
+            "کپی ناموفق بود."
+        );
+
+    }
+
+}
+
+
+/* ======================================
+   NEW CHAT
+====================================== */
+
+function clearChat() {
+
+    if (busy || loading) {
+        return;
+    }
+
+
+    history = [];
+
+
+    els.messages.replaceChildren();
+
+
+    const welcome =
+        document.createElement("div");
+
+
+    welcome.className = "welcome";
+
+
+    welcome.textContent =
+
+        "گفتگوی جدید آماده است. " +
+
+        "درخواست برنامه‌نویسی خودت را بنویس.";
+
+
+    els.messages.append(welcome);
+
+
+    els.editor.value = "";
+
+
+    language = "html";
+
+
+    updateFileName();
+
+
+    els.preview.srcdoc = "";
+
+
+    save();
+
+
+    setStatus(
+
+        generator
+
+        ? "گفتگوی جدید آماده است."
+
+        : "ابتدا مدل را فعال کن."
+
+    );
+
+}
+
+
+/* ======================================
+   MOBILE TABS
+====================================== */
+
+function tab(name) {
+
+    $("workspace").classList.toggle(
+
+        "show-code",
+
+        name === "code"
+
+    );
+
+
+    $("chatTab").classList.toggle(
+
+        "active",
+
+        name === "chat"
+
+    );
+
+
+    $("codeTab").classList.toggle(
+
+        "active",
+
+        name === "code"
+
+    );
+
+}
+
+
+/* ======================================
+   BUTTON EVENTS
+====================================== */
+
+els.load.addEventListener(
+
+    "click",
+
+    loadModel
+
+);
+
+
+els.send.addEventListener(
+
+    "click",
+
+    sendMessage
+
+);
+
+
+$("runBtn").addEventListener(
+
+    "click",
+
+    runCode
+
+);
+
+
+$("downloadBtn").addEventListener(
+
+    "click",
+
+    downloadCode
+
+);
+
+
+$("copyBtn").addEventListener(
+
+    "click",
+
+    copyCode
+
+);
+
+
+$("clearBtn").addEventListener(
+
+    "click",
+
+    clearChat
+
+);
+
+
+/* ======================================
+   MOBILE NAVIGATION
+====================================== */
+
+$("chatTab").addEventListener(
+
+    "click",
+
+    () => tab("chat")
+
+);
+
+
+$("codeTab").addEventListener(
+
+    "click",
+
+    () => tab("code")
+
+);
+
+
+/* ======================================
+   SUGGESTIONS
+====================================== */
+
+document.querySelectorAll(
+
+    "[data-suggest]"
+
+).forEach(button => {
+
+    button.addEventListener(
+
+        "click",
+
+        () => {
+
+            els.prompt.value =
+                button.dataset.suggest;
+
+
+            els.prompt.focus();
+
+        }
+
+    );
+
+});
+
+
+/* ======================================
+   KEYBOARD SHORTCUT
+====================================== */
+
+els.prompt.addEventListener(
+
+    "keydown",
+
+    event => {
+
+        if (
+
+            event.key === "Enter" &&
+
+            event.ctrlKey
+
+        ) {
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    }
+
+);
+
+
+/* ======================================
+   AUTO SAVE CODE
+====================================== */
+
+els.editor.addEventListener(
+
+    "input",
+
+    save
+
+);
+
+
+/* ======================================
+   MODEL SELECTION
+====================================== */
+
+els.model.addEventListener(
+
+    "change",
+
+    () => {
+
+        if (currentModel) {
+
+            els.connection.textContent =
+
+                "مدل جدید را فعال کن";
+
+
+            els.connection.classList.remove(
+
+                "ready"
+
+            );
 
 
             setStatus(
-              "نوبت تو ❌"
-            );
 
-          },
+                "برای تغییر مدل، " +
 
-          650
-        );
-
-
-        return;
-
-      }
-
-
-      /* AI START */
-
-      box.innerHTML +=
-        "<b>🤖 AI شروع می‌کنه</b>";
-
-
-      setTimeout(
-        async ()=>{
-
-          closeRPS();
-
-
-          gameActive =
-            true;
-
-
-          aiThinking =
-            true;
-
-
-          showAIThinking();
-
-
-          await sleep(
-            350
-          );
-
-
-          const move =
-            chooseBestMove();
-
-
-          if(
-            move!==null
-          ){
-
-            board[move] =
-              AI;
-
-          }
-
-
-          renderBoard();
-
-
-          aiThinking =
-            false;
-
-
-          setStatus(
-            "نوبت تو ❌"
-          );
-
-        },
-
-        650
-      );
-
-    },
-
-    450
-  );
-
-}
-
-
-
-function rpsWinner(
-  human,
-  bot
-){
-
-  if(
-    human===bot
-  )
-    return "draw";
-
-
-  if(
-
-    human==="rock"
-    &&
-    bot==="scissors"
-
-  )
-    return "human";
-
-
-  if(
-
-    human==="paper"
-    &&
-    bot==="rock"
-
-  )
-    return "human";
-
-
-  if(
-
-    human==="scissors"
-    &&
-    bot==="paper"
-
-  )
-    return "human";
-
-
-  return "ai";
-
-}
-
-
-
-function closeRPS(){
-
-  document
-    .getElementById(
-      "rpsOverlay"
-    )
-    .classList.remove(
-      "show"
-    );
-
-}
-
-
-
-/* =========================================
-   HUMAN MOVE
-========================================= */
-
-async function humanMove(
-  index
-){
-
-  if(
-    !gameActive
-    ||
-    aiThinking
-    ||
-    board[index]!==""
-  ){
-
-    return;
-
-  }
-
-
-  /*
-    قبل از حرکت کاربر،
-    وضعیت صفحه را ذخیره می‌کنیم
-  */
-
-  const before =
-    [...board];
-
-
-  /*
-    یادگیری حرکت کاربر
-  */
-
-  rememberHumanMove(
-    before,
-    index
-  );
-
-
-  board[index] =
-    HUMAN;
-
-
-  renderBoard();
-
-
-  let result =
-    checkResult(
-      board
-    );
-
-
-  if(result){
-
-    finishGame(
-      result
-    );
-
-    return;
-
-  }
-
-
-  aiThinking =
-    true;
-
-
-  showAIThinking();
-
-
-  await sleep(
-
-    300
-    +
-    Math.random()*250
-
-  );
-
-
-  const aiMove =
-    chooseBestMove();
-
-
-  if(
-    aiMove!==null
-  ){
-
-    board[aiMove] =
-      AI;
-
-  }
-
-
-  renderBoard();
-
-
-  result =
-    checkResult(
-      board
-    );
-
-
-  if(result){
-
-    finishGame(
-      result
-    );
-
-    return;
-
-  }
-
-
-  aiThinking =
-    false;
-
-
-  setStatus(
-    "نوبت تو ❌"
-  );
-
-}
-
-
-
-/* =========================================
-   RESULT CHECK
-========================================= */
-
-function checkResult(
-  state
-){
-
-  for(
-    const [a,b,c]
-    of WIN_LINES
-  ){
-
-    if(
-
-      state[a]!==""
-
-      &&
-
-      state[a]===state[b]
-
-      &&
-
-      state[a]===state[c]
-
-    ){
-
-      return state[a];
-
-    }
-
-  }
-
-
-  if(
-    state.every(
-      cell =>
-        cell!==""
-    )
-  ){
-
-    return "DRAW";
-
-  }
-
-
-  return null;
-
-}
-
-
-
-/* =========================================
-   MINIMAX
-========================================= */
-
-function minimax(
-
-  state,
-
-  depth,
-
-  maximizing,
-
-  alpha,
-
-  beta
-
-){
-
-  const result =
-    checkResult(
-      state
-    );
-
-
-  /*
-    AI برد
-  */
-
-  if(
-    result===AI
-  ){
-
-    return 100-depth;
-
-  }
-
-
-  /*
-    انسان برد
-  */
-
-  if(
-    result===HUMAN
-  ){
-
-    return depth-100;
-
-  }
-
-
-  /*
-    مساوی
-  */
-
-  if(
-    result==="DRAW"
-  ){
-
-    return 0;
-
-  }
-
-
-  /*
-    نوبت AI
-  */
-
-  if(maximizing){
-
-    let best =
-      -Infinity;
-
-
-    for(
-      let i=0;
-      i<9;
-      i++
-    ){
-
-      if(
-        state[i]===""
-      ){
-
-        state[i] =
-          AI;
-
-
-        const score =
-          minimax(
-
-            state,
-
-            depth+1,
-
-            false,
-
-            alpha,
-
-            beta
-
-          );
-
-
-        state[i] =
-          "";
-
-
-        best =
-          Math.max(
-            best,
-            score
-          );
-
-
-        alpha =
-          Math.max(
-            alpha,
-            score
-          );
-
-
-        /*
-          Alpha-Beta pruning
-        */
-
-        if(
-          beta<=alpha
-        ){
-
-          break;
-
-        }
-
-      }
-
-    }
-
-
-    return best;
-
-  }
-
-
-  /*
-    نوبت فرضی انسان
-  */
-
-  let best =
-    Infinity;
-
-
-  for(
-    let i=0;
-    i<9;
-    i++
-  ){
-
-    if(
-      state[i]===""
-    ){
-
-      state[i] =
-        HUMAN;
-
-
-      const score =
-        minimax(
-
-          state,
-
-          depth+1,
-
-          true,
-
-          alpha,
-
-          beta
-
-        );
-
-
-      state[i] =
-        "";
-
-
-      best =
-        Math.min(
-          best,
-          score
-        );
-
-
-      beta =
-        Math.min(
-          beta,
-          score
-        );
-
-
-      if(
-        beta<=alpha
-      ){
-
-        break;
-
-      }
-
-    }
-
-  }
-
-
-  return best;
-
-}
-
-
-
-/* =========================================
-   ALL AVAILABLE MOVES
-========================================= */
-
-function emptyMoves(
-  state
-){
-
-  const moves =
-    [];
-
-
-  for(
-    let i=0;
-    i<9;
-    i++
-  ){
-
-    if(
-      state[i]===""
-    ){
-
-      moves.push(i);
-
-    }
-
-  }
-
-
-  return moves;
-
-}
-
-
-
-/* =========================================
-   ADAPTIVE SCORE
-========================================= */
-
-/*
-
-اینجا بخش جدید هوش مصنوعی است.
-
-Minimax اول مشخص می‌کند چه حرکت‌هایی
-شکست‌ناپذیر هستند.
-
-اگر چند حرکت به یک اندازه قوی باشند،
-این تابع بررسی می‌کند:
-
-"این کاربر در گذشته از این وضعیت
-معمولاً کجا حرکت کرده؟"
-
-بعد حرکت AI را طوری انتخاب می‌کند
-که در برابر عادت همین کاربر بهتر باشد.
-
-*/
-
-function adaptiveScore(
-  aiMove
-){
-
-  /*
-    AI حرکت احتمالی را انجام می‌دهد
-  */
-
-  board[aiMove] =
-    AI;
-
-
-  /*
-    حالا این وضعیت،
-    وضعیتی است که انسان باید تصمیم بگیرد.
-  */
-
-  const key =
-    boardKey(
-      board
-    );
-
-
-  const history =
-    aiMemory.states[key]
-    ||
-    {};
-
-
-  const humanMoves =
-    emptyMoves(
-      board
-    );
-
-
-  if(
-    !humanMoves.length
-  ){
-
-    board[aiMove] =
-      "";
-
-    return 0;
-
-  }
-
-
-  let historyTotal =
-    0;
-
-
-  humanMoves.forEach(
-    move=>{
-
-      historyTotal +=
-        history[move]
-        ||
-        0;
-
-    }
-  );
-
-
-  /*
-    اگر AI هنوز این وضعیت
-    را از کاربر ندیده باشد،
-    کمی ترجیح استراتژیک استفاده می‌شود.
-  */
-
-  if(
-    historyTotal===0
-  ){
-
-    board[aiMove] =
-      "";
-
-
-    let score =
-      Math.random()*.05;
-
-
-    /*
-      وسط کمی ارزشمند
-    */
-
-    if(
-      aiMove===4
-    ){
-
-      score+=.25;
-
-    }
-
-
-    /*
-      گوشه‌ها
-    */
-
-    if(
-      [0,2,6,8]
-      .includes(
-        aiMove
-      )
-    ){
-
-      score+=.15;
-
-    }
-
-
-    return score;
-
-  }
-
-
-  /*
-    احتمال هر حرکت انسان
-    از روی سابقه خودش
-  */
-
-  let expectedScore =
-    0;
-
-
-  const smoothing =
-    .5;
-
-
-  const denominator =
-
-    historyTotal
-
-    +
-
-    smoothing
-    *
-    humanMoves.length;
-
-
-  for(
-    const humanMove
-    of humanMoves
-  ){
-
-    const count =
-      history[humanMove]
-      ||
-      0;
-
-
-    const probability =
-
-      (
-        count
-        +
-        smoothing
-      )
-
-      /
-
-      denominator;
-
-
-    /*
-      فرض می‌کنیم انسان
-      این حرکت را بزند
-    */
-
-    board[humanMove] =
-      HUMAN;
-
-
-    const result =
-      checkResult(
-        board
-      );
-
-
-    let futureScore;
-
-
-    if(
-      result===HUMAN
-    ){
-
-      futureScore =
-        -100;
-
-    }
-
-
-    else if(
-      result==="DRAW"
-    ){
-
-      futureScore =
-        0;
-
-    }
-
-
-    else{
-
-      /*
-        دوباره نوبت AI می‌شود.
-
-        ببین از اینجا AI
-        چقدر شرایط خوبی دارد.
-      */
-
-      futureScore =
-        minimax(
-
-          board,
-
-          1,
-
-          true,
-
-          -Infinity,
-
-          Infinity
-
-        );
-
-    }
-
-
-    board[humanMove] =
-      "";
-
-
-    expectedScore +=
-
-      probability
-      *
-      futureScore;
-
-  }
-
-
-  board[aiMove] =
-    "";
-
-
-  return expectedScore;
-
-}
-
-
-
-/* =========================================
-   CHOOSE BEST MOVE
-========================================= */
-
-function chooseBestMove(){
-
-  let bestMinimax =
-    -Infinity;
-
-
-  let perfectMoves =
-    [];
-
-
-  /*
-    مرحله اول:
-
-    Minimax تمام خانه‌ها را بررسی می‌کند.
-  */
-
-  for(
-    let i=0;
-    i<9;
-    i++
-  ){
-
-    if(
-      board[i]!==""
-    )
-      continue;
-
-
-    board[i] =
-      AI;
-
-
-    const score =
-      minimax(
-
-        board,
-
-        0,
-
-        false,
-
-        -Infinity,
-
-        Infinity
-
-      );
-
-
-    board[i] =
-      "";
-
-
-    if(
-      score>bestMinimax
-    ){
-
-      bestMinimax =
-        score;
-
-
-      perfectMoves =
-        [i];
-
-    }
-
-
-    else if(
-      score===bestMinimax
-    ){
-
-      perfectMoves.push(
-        i
-      );
-
-    }
-
-  }
-
-
-  if(
-    perfectMoves.length===0
-  ){
-
-    return null;
-
-  }
-
-
-  /*
-    اگر فقط یک حرکت بهترین باشد،
-    نیازی به حافظه نیست.
-  */
-
-  if(
-    perfectMoves.length===1
-  ){
-
-    return perfectMoves[0];
-
-  }
-
-
-  /*
-    مرحله دوم:
-
-    چند حرکت Minimax
-    همگی به یک اندازه امن‌اند.
-
-    حالا حافظه کاربر
-    تصمیم نهایی را می‌گیرد.
-  */
-
-  let bestAdaptive =
-    -Infinity;
-
-
-  let adaptiveMoves =
-    [];
-
-
-  for(
-    const move
-    of perfectMoves
-  ){
-
-    const score =
-      adaptiveScore(
-        move
-      );
-
-
-    if(
-      score>bestAdaptive
-    ){
-
-      bestAdaptive =
-        score;
-
-
-      adaptiveMoves =
-        [move];
-
-    }
-
-
-    else if(
-
-      Math.abs(
-        score-bestAdaptive
-      )
-
-      <
-
-      0.0001
-
-    ){
-
-      adaptiveMoves.push(
-        move
-      );
-
-    }
-
-  }
-
-
-  /*
-    اگر هنوز چند حرکت
-    کاملاً مساوی باشند،
-    یکی رندوم انتخاب می‌شود.
-  */
-
-  return adaptiveMoves[
-
-    Math.floor(
-
-      Math.random()
-      *
-      adaptiveMoves.length
-
-    )
-
-  ];
-
-}
-
-
-
-/* =========================================
-   FINISH GAME
-========================================= */
-
-function finishGame(
-  result
-){
-
-  gameActive =
-    false;
-
-
-  aiThinking =
-    false;
-
-
-  /*
-    فقط یک بار
-    این بازی به حافظه اضافه شود.
-  */
-
-  if(
-    !gameRecorded
-  ){
-
-    aiMemory.games++;
-
-
-    gameRecorded =
-      true;
-
-
-    saveMemory();
-
-  }
-
-
-  if(
-    result===HUMAN
-  ){
-
-    scores.human++;
-
-
-    setStatus(
-      "🏆 تو بردی!"
-    );
-
-
-    highlightWinner(
-      HUMAN
-    );
-
-  }
-
-
-  else if(
-    result===AI
-  ){
-
-    scores.ai++;
-
-
-    setStatus(
-      "🤖 AI برد!"
-    );
-
-
-    highlightWinner(
-      AI
-    );
-
-  }
-
-
-  else{
-
-    scores.draw++;
-
-
-    setStatus(
-      "🤝 بازی مساوی شد"
-    );
-
-  }
-
-
-  updateScores();
-
-}
-
-
-
-/* =========================================
-   WIN HIGHLIGHT
-========================================= */
-
-function highlightWinner(
-  player
-){
-
-  for(
-    const line
-    of WIN_LINES
-  ){
-
-    const [a,b,c] =
-      line;
-
-
-    if(
-
-      board[a]===player
-
-      &&
-
-      board[b]===player
-
-      &&
-
-      board[c]===player
-
-    ){
-
-      line.forEach(
-        index=>{
-
-          const cell =
-            document.querySelector(
-
-              `.cell[data-index="${index}"]`
+                "روی فعال‌سازی بزن."
 
             );
 
-
-          cell.classList.add(
-
-            player===HUMAN
-
-            ? "win-x"
-
-            : "win-o"
-
-          );
-
         }
-      );
-
-
-      return;
 
     }
 
-  }
+);
 
-}
 
+/* ======================================
+   INITIALIZE APPLICATION
+====================================== */
 
+restore();
 
-/* =========================================
-   RENDER
-========================================= */
 
-function renderBoard(){
+setStatus(
 
-  const cells =
-    document.querySelectorAll(
-      ".cell"
-    );
+    "مدل را انتخاب کن و " +
 
-
-  cells.forEach(
-    (
-      cell,
-      index
-    )=>{
-
-      cell.innerHTML =
-        "";
-
-
-      if(
-        board[index]===HUMAN
-      ){
-
-        cell.innerHTML = `
-
-          <div class="mark x">
-
-            ×
-
-          </div>
-
-        `;
-
-      }
-
-
-      else if(
-        board[index]===AI
-      ){
-
-        cell.innerHTML = `
-
-          <div class="mark o">
-
-            ○
-
-          </div>
-
-        `;
-
-      }
-
-    }
-  );
-
-}
-
-
-
-/* =========================================
-   STATUS
-========================================= */
-
-function setStatus(
-  text
-){
-
-  document.getElementById(
-    "status"
-  ).textContent =
-    text;
-
-}
-
-
-
-function showAIThinking(){
-
-  document.getElementById(
-    "status"
-  ).innerHTML = `
-
-    🤖 AI در حال تحلیل بازی
-
-    <span class="thinking-dots">
-
-      <i></i>
-      <i></i>
-      <i></i>
-
-    </span>
-
-  `;
-
-}
-
-
-
-/* =========================================
-   SCORE
-========================================= */
-
-function updateScores(){
-
-  document.getElementById(
-    "humanScore"
-  ).textContent =
-    scores.human;
-
-
-  document.getElementById(
-    "aiScore"
-  ).textContent =
-    scores.ai;
-
-
-  document.getElementById(
-    "drawScore"
-  ).textContent =
-    scores.draw;
-
-}
-
-
-
-/* =========================================
-   AI INFO
-========================================= */
-
-function updateAIInfo(){
-
-  document.getElementById(
-    "learnedGames"
-  ).textContent =
-    aiMemory.games;
-
-}
-
-
-
-/* =========================================
-   SLEEP
-========================================= */
-
-function sleep(
-  ms
-){
-
-  return new Promise(
-
-    resolve=>
-      setTimeout(
-        resolve,
-        ms
-      )
-
-  );
-
-}
-
-
-
-/* =========================================
-   START
-========================================= */
-
-createBoard();
-
-updateScores();
-
-updateAIInfo();
-
-
-setTimeout(
-
-  newRound,
-
-  250
+    "روی فعال‌سازی هوش مصنوعی بزن."
 
 );
 
 </script>
 
 </body>
-  </html>
+</html>
