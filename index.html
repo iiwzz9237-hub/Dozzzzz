@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b1020">
 
-<title>MyCode AI - هوش مصنوعی برنامه نویسی</title>
+<title>MyCode AI | برنامه‌نویس شخصی</title>
 
 <style>
 
 :root {
     color-scheme: dark;
     --bg: #0b1020;
-    --surface: #121a2b;
-    --surface2: #1b2740;
-    --border: #2a3955;
-    --fg: #eef4ff;
-    --sub: #9aabc6;
-    --accent: #7759f8;
-    --accent2: #9a86ff;
-    --ok: #43d3a0;
-    --danger: #fb7185;
+    --panel: #121a2c;
+    --input: #1a263e;
+    --border: #2b3a55;
+    --text: #edf3ff;
+    --muted: #9aabc6;
+    --accent: #7357f8;
+    --green: #3bd5a0;
 }
 
 * {
@@ -29,18 +26,17 @@
 }
 
 html, body {
-    height: 100%;
     margin: 0;
+    height: 100%;
 }
 
 body {
     font-family: Tahoma, Arial, sans-serif;
     background: var(--bg);
-    color: var(--fg);
-    overflow: hidden;
+    color: var(--text);
 }
 
-button, select, textarea {
+button, textarea, select {
     font: inherit;
 }
 
@@ -49,7 +45,7 @@ button {
 }
 
 button:disabled {
-    opacity: 0.45;
+    opacity: .45;
     cursor: not-allowed;
 }
 
@@ -57,96 +53,84 @@ button:disabled {
     height: 100dvh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 /* HEADER */
 
 header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    gap: 14px;
-    background: var(--surface);
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--panel);
     border-bottom: 1px solid var(--border);
-    padding: 12px 19px;
 }
 
 .brand {
     display: flex;
-    gap: 12px;
     align-items: center;
+    gap: 10px;
 }
 
-.brand-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    display: grid;
-    place-items: center;
-    font: 700 18px Consolas, monospace;
-    background: linear-gradient(
-        135deg,
-        #7356f7,
-        #3d8cf7
-    );
-}
-
-.brand h1 {
+.logo {
+    background: linear-gradient(130deg,#7552fc,#358cff);
+    padding: 12px;
+    border-radius: 12px;
     font-size: 19px;
-    margin: 0 0 4px;
+    font-weight: bold;
+    direction: ltr;
 }
 
-.brand small {
-    font-size: 11px;
-    color: var(--sub);
+h1 {
+    margin: 0 0 6px;
+    font-size: 18px;
 }
 
-#connectionStatus {
+small, #connection {
+    color: var(--muted);
     font-size: 11px;
-    color: var(--sub);
+}
+
+#connection {
+    max-width: 145px;
     text-align: left;
-    max-width: 210px;
-    line-height: 1.7;
+    line-height: 1.8;
 }
 
-#connectionStatus.ready {
-    color: var(--ok);
+#connection.ready {
+    color: var(--green);
 }
 
 /* MODEL BAR */
 
-.modelbar {
+.topbar {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
     gap: 9px;
-    padding: 10px 15px;
-    background: #0f1729;
+    flex-wrap: wrap;
+    padding: 10px;
+    background: #10182a;
     border-bottom: 1px solid var(--border);
 }
 
-select,
-.button {
+select, .btn {
     border: 1px solid var(--border);
-    background: var(--surface2);
-    color: var(--fg);
     border-radius: 10px;
-    padding: 10px 12px;
+    background: var(--input);
+    color: var(--text);
+    padding: 11px;
     font-size: 12px;
 }
 
 select {
     flex: 1;
     min-width: 180px;
-    max-width: 390px;
-    outline: none;
+    outline: 0;
 }
 
-.button:hover {
-    filter: brightness(1.14);
-}
-
-.button.primary {
+.btn.primary, #send {
     background: var(--accent);
     border-color: var(--accent);
 }
@@ -155,74 +139,76 @@ select {
 
 .progress {
     height: 3px;
-    background: #253047;
+    background: #253148;
 }
 
-.progress div {
+#progressBar {
     height: 100%;
     width: 0;
     background: linear-gradient(
         90deg,
-        var(--accent),
-        #34d399
+        #7357f8,
+        #3bd5a0
     );
-    transition: width 0.2s;
+    transition: width .2s;
 }
 
-/* WORKSPACE */
+/* TABS */
 
 .tabs {
     display: none;
 }
 
+/* WORKSPACE */
+
 .workspace {
-    display: grid;
-    grid-template-columns: 42% 58%;
     flex: 1;
     min-height: 0;
+    display: grid;
+    grid-template-columns:
+        minmax(0,42%)
+        minmax(0,58%);
 }
 
-.chat,
-.codearea {
-    min-width: 0;
-    min-height: 0;
+.chat, .code {
     display: flex;
     flex-direction: column;
+    min-height: 0;
+    min-width: 0;
 }
 
 .chat {
     border-left: 1px solid var(--border);
 }
 
-.pane-title {
-    min-height: 52px;
-    padding: 11px 15px;
-    background: var(--surface);
+.panehead {
+    background: var(--panel);
+    min-height: 51px;
+    padding: 10px 13px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 10px;
     border-bottom: 1px solid var(--border);
 }
 
-.pane-title strong {
+.panehead strong {
     font-size: 13px;
 }
 
-/* CHAT */
+/* CHAT MESSAGES */
 
 .messages {
-    overflow-y: auto;
     flex: 1;
-    min-height: 0;
-    padding: 18px 15px;
+    overflow-y: auto;
+    padding: 17px;
+    scroll-behavior: smooth;
 }
 
 .welcome {
+    max-width: 470px;
+    margin: 40px auto;
     text-align: center;
-    max-width: 530px;
-    margin: 30px auto;
-    padding: 0 8px;
 }
 
 .welcome[hidden] {
@@ -230,29 +216,30 @@ select {
 }
 
 .hero {
-    width: 70px;
-    height: 70px;
+    width: 65px;
+    height: 65px;
+    margin: 0 auto 18px;
+    border-radius: 19px;
     display: grid;
     place-items: center;
-    border-radius: 20px;
-    margin: 0 auto 20px;
     background: linear-gradient(
-        135deg,
-        #7250ff,
-        #2788eb
+        130deg,
+        #7957fa,
+        #2380e8
     );
-    font: 700 29px Consolas, monospace;
+    font-size: 29px;
+    direction: ltr;
 }
 
 .welcome h2 {
-    font-size: 22px;
-    margin: 0 0 12px;
+    font-size: 21px;
+    margin: 10px 0;
 }
 
 .welcome p {
+    color: var(--muted);
+    line-height: 2;
     font-size: 12px;
-    color: var(--sub);
-    line-height: 2.1;
 }
 
 .suggestions {
@@ -263,160 +250,178 @@ select {
 }
 
 .suggestions button {
-    background: var(--surface);
     border: 1px solid var(--border);
-    color: var(--fg);
-    padding: 14px 9px;
-    border-radius: 11px;
+    border-radius: 10px;
+    background: var(--panel);
+    color: var(--text);
+    padding: 12px 7px;
     font-size: 12px;
 }
 
-.suggestions button:hover {
-    border-color: var(--accent);
-}
-
-/* MESSAGES */
+/* MESSAGE BUBBLES */
 
 .message {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     margin-bottom: 20px;
-    max-width: 100%;
 }
 
-.message .who {
-    color: var(--accent2);
+.message.user {
+    align-items: flex-end;
+}
+
+.who {
     font-size: 11px;
-    margin-bottom: 7px;
+    color: #b7a7ff;
+    margin: 0 7px 7px;
 }
 
 .message.user .who {
-    color: var(--ok);
+    color: var(--green);
 }
 
 .bubble {
+    max-width: 96%;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px 14px 14px 4px;
+    padding: 12px 14px;
+    line-height: 1.9;
+    font-size: 13px;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     unicode-bidi: plaintext;
-    line-height: 1.9;
-    padding: 13px;
-    border-radius: 13px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    font-size: 12px;
+    text-align: start;
 }
 
 .message.user .bubble {
-    background: #1d2b50;
-}
-
-.message.ai .bubble {
-    direction: auto;
+    background: #26345b;
+    border-radius: 14px 14px 4px 14px;
 }
 
 /* INPUT */
 
-.inputbox {
-    background: var(--surface);
+.composer {
     border-top: 1px solid var(--border);
-    padding: 12px;
+    background: var(--panel);
+    padding: 11px;
 }
 
-.inputbox textarea {
-    resize: vertical;
+#prompt {
     width: 100%;
-    min-height: 85px;
-    max-height: 190px;
-    background: var(--surface2);
+    min-height: 68px;
+    max-height: 160px;
+    resize: vertical;
+    outline: 0;
+    background: var(--input);
+    color: var(--text);
     border: 1px solid var(--border);
-    color: var(--fg);
-    border-radius: 11px;
+    border-radius: 12px;
     padding: 12px;
-    outline: none;
     line-height: 1.8;
-    font-size: 12px;
+    font-size: 13px;
 }
 
-.inputbox textarea:focus {
+#prompt:focus,
+#codeEditor:focus {
     border-color: var(--accent);
 }
 
-.actionrow {
+.actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-top: 9px;
+    margin-top: 8px;
 }
 
-.actionrow #aiStatus {
-    color: var(--sub);
+#status {
+    color: var(--muted);
     font-size: 11px;
     line-height: 1.8;
+    overflow-wrap: anywhere;
 }
 
-.send {
-    background: var(--accent);
+.buttons {
+    display: flex;
+    gap: 7px;
+    flex-shrink: 0;
+}
+
+#send {
+    color: #fff;
     border: 0;
     border-radius: 9px;
-    color: white;
-    padding: 12px 17px;
+    padding: 12px 16px;
     font-size: 12px;
-    flex-shrink: 0;
+}
+
+#stop {
+    background: #85374a;
+    color: #fff;
+    border: 0;
+    border-radius: 9px;
+    padding: 11px;
+    font-size: 12px;
+}
+
+#stop[hidden] {
+    display: none;
 }
 
 /* CODE EDITOR */
 
-.codearea {
+.code {
     background: #0a1020;
 }
 
-.toolbar {
+.tools {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 7px;
-    padding: 11px;
+    background: var(--panel);
+    padding: 10px;
     border-bottom: 1px solid var(--border);
-    background: var(--surface);
 }
 
-.toolbar .filename {
+#filename {
+    color: var(--muted);
     font: 12px Consolas, monospace;
-    color: var(--sub);
     margin-left: auto;
     direction: ltr;
 }
 
 #codeEditor {
     flex: 1;
-    min-height: 120px;
+    min-height: 100px;
     width: 100%;
-    resize: none;
-    outline: none;
-    border: 0;
     background: #0a1020;
-    color: #d8e5fc;
-    padding: 17px;
-    font: 12px/1.8 Consolas, "Courier New", monospace;
+    color: #dce7ff;
+    resize: none;
+    border: 0;
+    outline: 0;
+    padding: 14px;
+    font: 13px/1.8 Consolas, monospace;
     direction: ltr;
     text-align: left;
     tab-size: 4;
 }
 
-/* PREVIEW */
-
-.preview-title {
-    background: var(--surface);
-    border-block: 1px solid var(--border);
-    padding: 10px 12px;
+.previewTitle {
+    background: var(--panel);
     font-size: 12px;
+    padding: 10px;
+    border-top: 1px solid var(--border);
 }
 
-.preview {
-    width: 100%;
+#preview {
     height: 33%;
-    min-height: 115px;
-    background: white;
+    min-height: 110px;
     border: 0;
+    background: #fff;
+    width: 100%;
 }
 
 /* MOBILE */
@@ -424,25 +429,15 @@ select {
 @media(max-width:800px) {
 
     header {
-        padding: 10px 12px;
+        padding: 10px;
     }
 
-    .brand-icon {
-        width: 38px;
-        height: 38px;
+    .logo {
+        font-size: 17px;
     }
 
-    .brand h1 {
+    h1 {
         font-size: 16px;
-    }
-
-    .brand small {
-        font-size: 10px;
-    }
-
-    #connectionStatus {
-        font-size: 10px;
-        max-width: 140px;
     }
 
     .workspace {
@@ -452,29 +447,28 @@ select {
 
     .tabs {
         display: flex;
-        background: var(--surface);
+        background: var(--panel);
         border-bottom: 1px solid var(--border);
     }
 
     .tabs button {
-        background: transparent;
-        border: 0;
         flex: 1;
-        color: var(--sub);
+        border: 0;
+        background: transparent;
+        color: var(--muted);
         padding: 13px;
     }
 
     .tabs button.active {
-        color: white;
+        color: #fff;
         border-bottom: 2px solid var(--accent);
     }
 
-    .chat,
-    .codearea {
+    .chat, .code {
         flex: 1;
     }
 
-    .codearea {
+    .code {
         display: none;
     }
 
@@ -482,7 +476,7 @@ select {
         display: none;
     }
 
-    .workspace.show-code .codearea {
+    .workspace.show-code .code {
         display: flex;
     }
 
@@ -491,21 +485,11 @@ select {
     }
 
     .welcome {
-        margin: 20px auto;
+        margin: 28px auto;
     }
-
-    .suggestions {
-        gap: 8px;
-    }
-
-    .preview {
-        height: 32%;
-    }
-
 }
 
 </style>
-
 </head>
 
 <body>
@@ -516,45 +500,45 @@ select {
 
     <div class="brand">
 
-        <div class="brand-icon">
+        <div class="logo">
             &lt;/&gt;
         </div>
 
         <div>
             <h1>MyCode AI</h1>
             <small>
-                هوش مصنوعی شخصی برنامه‌نویسی
+                دستیار شخصی کدنویسی · نسخه CPU Worker
             </small>
         </div>
 
     </div>
 
-    <span id="connectionStatus">
+    <div id="connection">
         مدل بارگذاری نشده
-    </span>
+    </div>
 
 </header>
 
 
 <!-- MODEL SELECTION -->
 
-<div class="modelbar">
+<div class="topbar">
 
-    <select id="modelSelect">
-
-        <option value="coder">
-            Qwen2.5 Coder 0.5B - مخصوص کدنویسی
-        </option>
+    <select id="model">
 
         <option value="light">
-            SmolLM2 135M - مدل سبک گوشی
+            SmolLM2 135M — سبک (برای تست)
+        </option>
+
+        <option value="coder">
+            Qwen2.5 Coder 0.5B — کدنویسی (سنگین)
         </option>
 
     </select>
 
     <button
-        id="loadBtn"
-        class="button primary"
+        id="load"
+        class="btn primary"
     >
         فعال‌سازی هوش مصنوعی
     </button>
@@ -563,7 +547,7 @@ select {
 
 
 <div class="progress">
-    <div id="progressFill"></div>
+    <div id="progressBar"></div>
 </div>
 
 
@@ -582,31 +566,31 @@ select {
 </div>
 
 
-<!-- MAIN WORKSPACE -->
+<!-- MAIN -->
 
 <main class="workspace" id="workspace">
 
 
-<!-- CHAT PANEL -->
+<!-- CHAT PAGE -->
 
 <section class="chat">
 
-    <div class="pane-title">
+    <div class="panehead">
 
         <strong>
             گفتگو با MyCode AI
         </strong>
 
-        <button id="clearBtn" class="button">
+        <button class="btn" id="newChat">
             گفتگوی جدید
         </button>
 
     </div>
 
 
-    <div id="messages" class="messages">
+    <div class="messages" id="messages">
 
-        <div id="welcome" class="welcome">
+        <div class="welcome" id="welcome">
 
             <div class="hero">
                 &lt;/&gt;
@@ -617,38 +601,37 @@ select {
             </h2>
 
             <p>
-                هوش مصنوعی شخصی مخصوص برنامه‌نویسی
+                مدل روی گوشی و بدون API پولی اجرا می‌شود.
                 <br>
-                بدون نیاز به API و WebGPU
-                <br>
-                با پردازنده گوشی کار می‌کند.
+                اول مدل سبک را فعال کن،
+                سپس «سلام» بفرست.
             </p>
 
 
             <div class="suggestions">
 
                 <button
-                    data-suggest="یک بازی مار کامل با HTML و CSS و JavaScript بساز"
+                    data-ask="سلام! کوتاه جواب بده."
                 >
-                    ساخت بازی مار
+                    تست سلام
                 </button>
 
                 <button
-                    data-suggest="یک ماشین حساب زیبا با HTML و CSS و JavaScript بساز"
+                    data-ask="یک تابع جمع دو عدد در جاوااسکریپت بنویس."
                 >
-                    ساخت ماشین حساب
+                    تابع جاوااسکریپت
                 </button>
 
                 <button
-                    data-suggest="یک سایت فروشگاهی واکنش گرا با HTML بساز"
+                    data-ask="یک ماشین حساب ساده HTML بنویس."
                 >
-                    ساخت فروشگاه
+                    ماشین حساب
                 </button>
 
                 <button
-                    data-suggest="یک برنامه ماشین حساب با Python بنویس"
+                    data-ask="یک برنامه ساده پایتون بنویس."
                 >
-                    برنامه Python
+                    کد پایتون
                 </button>
 
             </div>
@@ -660,22 +643,32 @@ select {
 
     <!-- MESSAGE INPUT -->
 
-    <div class="inputbox">
+    <div class="composer">
 
         <textarea
             id="prompt"
-            placeholder="مثلاً: یک بازی دوز با HTML بساز که بتوانم با کامپیوتر بازی کنم..."
+            placeholder="پیامت را بنویس... مثلاً سلام"
+            spellcheck="false"
         ></textarea>
 
-        <div class="actionrow">
 
-            <span id="aiStatus">
-                ابتدا مدل را فعال کن.
+        <div class="actions">
+
+            <span id="status">
+                مدل سبک را انتخاب و فعال کن.
             </span>
 
-            <button class="send" id="sendBtn">
-                ارسال ↑
-            </button>
+            <div class="buttons">
+
+                <button id="stop" hidden>
+                    توقف
+                </button>
+
+                <button id="send">
+                    ارسال ↑
+                </button>
+
+            </div>
 
         </div>
 
@@ -684,25 +677,25 @@ select {
 </section>
 
 
-<!-- CODE PANEL -->
+<!-- CODE EDITOR PAGE -->
 
-<section class="codearea">
+<section class="code">
 
-    <div class="toolbar">
+    <div class="tools">
 
-        <span class="filename" id="codeTitle">
+        <span id="filename">
             index.html
         </span>
 
-        <button id="copyBtn" class="button">
+        <button class="btn" id="copy">
             کپی
         </button>
 
-        <button id="downloadBtn" class="button">
+        <button class="btn" id="download">
             دانلود
         </button>
 
-        <button id="runBtn" class="button primary">
+        <button class="btn primary" id="run">
             اجرای HTML
         </button>
 
@@ -710,20 +703,19 @@ select {
 
 
     <textarea
-        spellcheck="false"
         id="codeEditor"
-        placeholder="// کدهای تولیدشده اینجا نمایش داده می‌شوند..."
+        placeholder="// کد تولیدشده اینجا نمایش داده می‌شود..."
+        spellcheck="false"
     ></textarea>
 
 
-    <div class="preview-title">
-        پیش‌نمایش HTML
+    <div class="previewTitle">
+        پیش‌نمایش HTML (اجرای محلی در قاب محدود)
     </div>
 
     <iframe
-        class="preview"
         id="preview"
-        title="پیش‌نمایش HTML"
+        title="پیش‌نمایش"
         sandbox="allow-scripts"
         referrerpolicy="no-referrer"
     ></iframe>
@@ -735,241 +727,470 @@ select {
 </div>
 
 
-<!-- ======================================
-     AI ENGINE - CPU VERSION
-====================================== -->
+<!-- =====================================
+     AI WEB WORKER
+===================================== -->
 
-<script type="module">
+<script id="aiWorkerCode" type="text/plain">
 
-/* ======================================
-   HTML ELEMENTS
-====================================== */
+let generator = null;
+
+let chosen = '';
+
+let loaded = false;
+
+const models = {
+
+    light:
+        'onnx-community/SmolLM2-135M-Instruct-ONNX',
+
+    coder:
+        'onnx-community/Qwen2.5-Coder-0.5B-Instruct'
+
+};
+
+let lib = null;
+
+
+/* WORKER MESSAGE HANDLER */
+
+self.onmessage = async (event) => {
+
+    const {
+        type,
+        model,
+        messages,
+        maxTokens
+    } = event.data;
+
+    try {
+
+        /* LOAD MODEL */
+
+        if (type === 'load') {
+
+            loaded = false;
+
+            chosen = model;
+
+            generator = null;
+
+            self.postMessage({
+
+                type: 'info',
+
+                text: 'در حال بارگیری کتابخانه پردازش...'
+
+            });
+
+
+            lib = lib || await import(
+                'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1'
+            );
+
+
+            lib.env.allowLocalModels = false;
+
+            lib.env.backends.onnx.wasm.numThreads = 1;
+
+
+            generator = await lib.pipeline(
+
+                'text-generation',
+
+                models[model],
+
+                {
+
+                    device: 'wasm',
+
+                    dtype: 'q4',
+
+                    progress_callback: (p) => {
+
+                        if (
+                            p.status === 'progress' &&
+                            Number.isFinite(p.progress)
+                        ) {
+
+                            self.postMessage({
+
+                                type: 'progress',
+
+                                percentage:
+                                    Math.round(p.progress),
+
+                                file: p.file || ''
+
+                            });
+
+                        }
+
+                        else if (
+                            p.status === 'initiate'
+                        ) {
+
+                            self.postMessage({
+
+                                type: 'info',
+
+                                text:
+                                    'در حال دریافت ' +
+                                    (p.file || 'مدل')
+
+                            });
+
+                        }
+
+                    }
+
+                }
+
+            );
+
+
+            loaded = true;
+
+
+            self.postMessage({
+
+                type: 'ready',
+
+                model
+
+            });
+
+        }
+
+
+        /* GENERATE RESPONSE */
+
+        if (type === 'generate') {
+
+            if (!loaded || !generator) {
+
+                throw new Error(
+                    'ابتدا مدل را فعال کن.'
+                );
+
+            }
+
+
+            self.postMessage({
+
+                type: 'started'
+
+            });
+
+
+            let streamed = '';
+
+
+            const streamer = new lib.TextStreamer(
+
+                generator.tokenizer,
+
+                {
+
+                    skip_prompt: true,
+
+                    skip_special_tokens: true,
+
+                    callback_function: piece => {
+
+                        streamed += piece;
+
+                        self.postMessage({
+
+                            type: 'delta',
+
+                            text: piece
+
+                        });
+
+                    }
+
+                }
+
+            );
+
+
+            const result = await generator(
+
+                messages,
+
+                {
+
+                    max_new_tokens: maxTokens,
+
+                    do_sample: false,
+
+                    streamer
+
+                }
+
+            );
+
+
+            /* EXTRACT RESPONSE */
+
+            const raw =
+                result?.[0]?.generated_text;
+
+
+            let answer = Array.isArray(raw)
+
+                ? (raw.at(-1)?.content || '')
+
+                : (
+                    typeof raw === 'string'
+                    ? raw
+                    : ''
+                );
+
+
+            if (!answer.trim()) {
+
+                answer = streamed;
+
+            }
+
+
+            if (!answer.trim()) {
+
+                throw new Error(
+                    'مدل پاسخ متنی تولید نکرد.'
+                );
+
+            }
+
+
+            self.postMessage({
+
+                type: 'done',
+
+                text: answer
+
+            });
+
+        }
+
+    }
+
+    catch (err) {
+
+        self.postMessage({
+
+            type: 'failed',
+
+            phase: type,
+
+            error:
+                err?.message ||
+                String(err)
+
+        });
+
+    }
+
+};
+
+</script>
+
+
+<!-- =====================================
+     MAIN APPLICATION
+===================================== -->
+
+<script>
+
+/* ELEMENTS */
 
 const $ = id => document.getElementById(id);
 
-const els = {
 
-    messages: $("messages"),
+const ui = {
 
-    prompt: $("prompt"),
+    model: $('model'),
 
-    editor: $("codeEditor"),
+    load: $('load'),
 
-    send: $("sendBtn"),
+    send: $('send'),
 
-    load: $("loadBtn"),
+    stop: $('stop'),
 
-    model: $("modelSelect"),
+    input: $('prompt'),
 
-    status: $("aiStatus"),
+    status: $('status'),
 
-    connection: $("connectionStatus"),
+    connection: $('connection'),
 
-    progress: $("progressFill"),
+    progress: $('progressBar'),
 
-    preview: $("preview"),
+    messages: $('messages'),
 
-    title: $("codeTitle")
+    welcome: $('welcome'),
+
+    editor: $('codeEditor'),
+
+    preview: $('preview'),
+
+    filename: $('filename')
 
 };
 
 
-/* ======================================
-   LOCAL AI MODELS
-====================================== */
+/* CONFIG */
 
-const MODEL_CODER =
-    "onnx-community/Qwen2.5-Coder-0.5B-Instruct";
+const modelNames = {
 
-const MODEL_LIGHT =
-    "onnx-community/SmolLM2-135M-Instruct-ONNX";
+    light: 'SmolLM2 135M',
+
+    coder: 'Qwen2.5 Coder 0.5B'
+
+};
 
 
-/* ======================================
-   AI VARIABLES
-====================================== */
+const storageKey = 'mycode_chat_worker_v3';
 
-let generator = null;
 
-let transformers = null;
+/* STATE */
 
-let currentModel = null;
+let worker = null;
 
-let busy = false;
+let workerURL = null;
+
+let ready = false;
 
 let loading = false;
 
+let busy = false;
+
+let selectedModel = '';
+
 let history = [];
 
-let language = "html";
+let currentAnswer = null;
+
+let generationStart = 0;
+
+let timer = null;
+
+let language = 'html';
 
 
-/* ======================================
-   PERSONAL AI INSTRUCTIONS
-====================================== */
+/* STATUS */
 
-const systemPrompt = `
+function status(text) {
 
-You are MyCode AI.
-
-You are a personal artificial intelligence
-specialized in software engineering.
-
-Your primary job is writing computer code.
-
-You understand:
-
-HTML
-CSS
-JavaScript
-Python
-C++
-PHP
-SQL
-
-Rules:
-
-1. Write actual working code.
-
-2. Do not provide pseudocode when
-the user requests a working program.
-
-3. When HTML is requested,
-generate a complete HTML file.
-
-4. Include CSS and JavaScript
-inside the HTML file when needed.
-
-5. Always place source code inside
-markdown code fences.
-
-6. Use correct language identifiers.
-
-7. When the user asks for modifications,
-provide the complete updated code.
-
-8. Help the user identify errors.
-
-9. Respond in Persian when the user
-speaks Persian.
-
-10. Do not falsely claim that code
-has been tested.
-
-11. Keep explanations concise.
-
-12. You are MyCode AI,
-a personal coding assistant.
-
-`;
-
-
-/* ======================================
-   STATUS MANAGEMENT
-====================================== */
-
-function setStatus(text) {
-
-    els.status.textContent = text;
+    ui.status.textContent = text;
 
 }
 
+
+/* BUTTON STATES */
+
+function buttons() {
+
+    ui.load.disabled =
+        loading || busy;
+
+    ui.model.disabled =
+        loading || busy;
+
+    ui.send.disabled =
+        loading ||
+        busy ||
+        !ui.input.value.trim();
+
+    ui.stop.hidden = !busy;
+
+}
+
+
+/* SCROLL */
 
 function scrollDown() {
 
-    els.messages.scrollTop =
-        els.messages.scrollHeight;
+    ui.messages.scrollTop =
+        ui.messages.scrollHeight;
 
 }
 
 
-/* ======================================
-   ADD CHAT MESSAGE
-====================================== */
+/* ADD MESSAGE */
 
 function message(role, text) {
 
-    const row = document.createElement("div");
+    const row =
+        document.createElement('div');
 
-    row.className = "message " + role;
+    row.className =
+        'message ' + role;
 
 
-    const who = document.createElement("div");
+    const who =
+        document.createElement('div');
 
-    who.className = "who";
+    who.className = 'who';
 
     who.textContent =
-        role === "user"
-        ? "شما"
-        : "MyCode AI";
+        role === 'user'
+        ? 'شما'
+        : 'MyCode AI';
 
 
-    const body = document.createElement("div");
+    const bubble =
+        document.createElement('div');
 
-    body.className = "bubble";
+    bubble.className = 'bubble';
 
-    body.textContent = text;
+    bubble.textContent = text;
 
 
-    row.append(who, body);
+    row.append(who, bubble);
 
-    els.messages.append(row);
+    ui.messages.append(row);
 
     scrollDown();
 
-    return body;
+    return bubble;
 
 }
 
 
-/* ======================================
-   SAVE MEMORY
-====================================== */
+/* SAVE CHAT */
 
-function save() {
+function persist() {
 
     try {
 
         localStorage.setItem(
 
-            "mycode_v1_history",
+            storageKey,
 
-            JSON.stringify(history.slice(-12))
+            JSON.stringify({
 
-        );
+                history:
+                    history.slice(-10),
 
+                code:
+                    ui.editor.value.slice(0, 100000),
 
-        localStorage.setItem(
+                language
 
-            "mycode_v1_editor",
-
-            els.editor.value.slice(0, 250000)
-
-        );
-
-
-        localStorage.setItem(
-
-            "mycode_v1_lang",
-
-            language
+            })
 
         );
 
     }
 
-    catch (error) {
-
-        console.warn("Storage:", error);
-
-    }
+    catch (e) {}
 
 }
 
 
-/* ======================================
-   RESTORE MEMORY
-====================================== */
+/* RESTORE CHAT */
 
 function restore() {
 
@@ -977,130 +1198,117 @@ function restore() {
 
         const saved = JSON.parse(
 
-            localStorage.getItem(
-                "mycode_v1_history"
-            ) || "[]"
+            localStorage.getItem(storageKey) || '{}'
 
         );
 
 
-        if (Array.isArray(saved)) {
+        if (Array.isArray(saved.history)) {
 
-            history = saved.filter(item =>
+            history = saved.history.filter(
 
-                item &&
+                x =>
+                    x &&
+                    ['user','assistant'].includes(x.role) &&
+                    typeof x.content === 'string'
 
-                ["user", "assistant"].includes(item.role) &&
-
-                typeof item.content === "string"
-
-            ).slice(-12);
+            ).slice(-10);
 
 
             if (history.length) {
 
-                $("welcome").hidden = true;
-
-
-                history.forEach(item => {
-
-                    message(
-
-                        item.role === "user"
-                            ? "user"
-                            : "ai",
-
-                        item.content
-
-                    );
-
-                });
+                ui.welcome.hidden = true;
 
             }
+
+
+            history.forEach(x => {
+
+                message(
+
+                    x.role === 'user'
+                    ? 'user'
+                    : 'ai',
+
+                    x.content
+
+                );
+
+            });
 
         }
 
 
-        els.editor.value =
-            localStorage.getItem(
-                "mycode_v1_editor"
-            ) || "";
+        if (typeof saved.code === 'string') {
+
+            ui.editor.value = saved.code;
+
+        }
 
 
         language =
-            localStorage.getItem(
-                "mycode_v1_lang"
-            ) || "html";
+            saved.language || 'html';
 
 
-        updateFileName();
+        fileName();
 
     }
 
-    catch (error) {
-
-        console.warn("Restore:", error);
-
-    }
+    catch (e) {}
 
 }
 
 
-/* ======================================
-   CODE FILE NAME
-====================================== */
+/* FILE NAME */
 
-function updateFileName() {
+function fileName() {
 
-    const extensions = {
+    const ext = {
 
-        html: "html",
+        javascript: 'js',
 
-        htm: "html",
+        js: 'js',
 
-        js: "js",
+        python: 'py',
 
-        javascript: "js",
+        py: 'py',
 
-        py: "py",
+        html: 'html',
 
-        python: "py",
+        css: 'css',
 
-        css: "css",
+        cpp: 'cpp',
 
-        cpp: "cpp",
+        'c++': 'cpp',
 
-        "c++": "cpp",
+        json: 'json',
 
-        php: "php",
+        php: 'php',
 
-        json: "json",
-
-        sql: "sql"
+        sql: 'sql'
 
     };
 
 
-    const extension =
-        extensions[language] || "txt";
+    ui.filename.textContent =
 
+        'mycode-project.' +
 
-    els.title.textContent =
-        "mycode-project." + extension;
+        (ext[language] || 'txt');
 
 }
 
 
-/* ======================================
-   EXTRACT GENERATED CODE
-====================================== */
+/* EXTRACT CODE */
 
 function extractCode(text) {
 
     const blocks = [
 
         ...text.matchAll(
+
             /```([^\r\n`]*)\r?\n([\s\S]*?)```/g
+
         )
 
     ];
@@ -1108,560 +1316,449 @@ function extractCode(text) {
 
     if (blocks.length) {
 
-        const selected =
+        const pick =
 
-            blocks.find(block =>
+            blocks.find(
 
-                /^html\s*$/i.test(block[1])
+                x =>
+                    x[1].trim().toLowerCase()
+                    === 'html'
 
             ) || blocks[0];
 
 
-        language = (
+        language =
 
-            selected[1]
+            pick[1]
                 .trim()
-                .split(/\s+/)[0] || "txt"
-
-        ).toLowerCase();
-
-
-        els.editor.value =
-            selected[2].trim();
+                .split(/\s+/)[0]
+                .toLowerCase() || 'txt';
 
 
-        updateFileName();
-
-        save();
-
-        return true;
-
-    }
+        ui.editor.value =
+            pick[2].trim();
 
 
-    const isHTML =
-        /^\s*<(?:!doctype\s+html|html)[\s>]/i.test(text);
+        fileName();
 
-
-    if (isHTML) {
-
-        language = "html";
-
-        els.editor.value = text.trim();
-
-        updateFileName();
-
-        save();
-
-        return true;
-
-    }
-
-
-    return false;
-
-}
-
-
-/* ======================================
-   LOAD AI MODEL USING CPU
-====================================== */
-
-async function loadModel() {
-
-    if (busy || loading) {
-        return;
-    }
-
-
-    if (!window.isSecureContext) {
-
-        setStatus(
-            "صفحه باید با HTTPS اجرا شود."
-        );
+        persist();
 
         return;
 
     }
-
-
-    loading = true;
-
-    els.load.disabled = true;
-
-    els.send.disabled = true;
-
-    els.model.disabled = true;
-
-
-    els.connection.classList.remove("ready");
-
-    els.connection.textContent =
-        "در حال آماده‌سازی مدل CPU...";
-
-
-    setStatus(
-        "در حال آماده‌سازی موتور هوش مصنوعی..."
-    );
-
-
-    els.progress.style.width = "0%";
-
-
-    try {
-
-        /* IMPORT TRANSFORMERS.JS */
-
-        if (!transformers) {
-
-            transformers = await import(
-
-                "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1"
-
-            );
-
-        }
-
-
-        /* CONFIGURE CPU */
-
-        transformers.env.allowLocalModels = false;
-
-
-        transformers.env.backends.onnx.wasm.numThreads = 1;
-
-
-        /* SELECT MODEL */
-
-        const selected =
-
-            els.model.value === "coder"
-
-            ? MODEL_CODER
-
-            : MODEL_LIGHT;
-
-
-        generator = null;
-
-        currentModel = null;
-
-
-        setStatus(
-            "در حال دانلود مدل هوش مصنوعی..."
-        );
-
-
-        /* CREATE AI PIPELINE */
-
-        generator = await transformers.pipeline(
-
-            "text-generation",
-
-            selected,
-
-            {
-
-                dtype: "q4",
-
-                device: "wasm",
-
-                progress_callback: progress => {
-
-                    if (
-
-                        progress.status === "progress" &&
-
-                        Number.isFinite(progress.progress)
-
-                    ) {
-
-                        const percent = Math.max(
-
-                            0,
-
-                            Math.min(
-
-                                100,
-
-                                Math.round(progress.progress)
-
-                            )
-
-                        );
-
-
-                        els.progress.style.width =
-                            percent + "%";
-
-
-                        setStatus(
-
-                            "در حال دریافت مدل: " +
-
-                            percent +
-
-                            "٪ — " +
-
-                            (progress.file || "")
-
-                        );
-
-                    }
-
-                    else if (progress.status === "done") {
-
-                        setStatus(
-
-                            "فایل دریافت شد؛ " +
-
-                            "در حال آماده‌سازی هوش مصنوعی..."
-
-                        );
-
-                    }
-
-                }
-
-            }
-
-        );
-
-
-        /* MODEL READY */
-
-        currentModel = selected;
-
-
-        els.progress.style.width = "100%";
-
-
-        els.connection.textContent =
-            "● هوش مصنوعی فعال است";
-
-
-        els.connection.classList.add("ready");
-
-
-        els.load.textContent =
-            "مدل فعال شد";
-
-
-        setStatus(
-
-            "هوش مصنوعی آماده کدنویسی است."
-
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-
-        generator = null;
-
-        currentModel = null;
-
-
-        els.connection.textContent =
-            "خطا در فعال‌سازی";
-
-
-        els.connection.classList.remove("ready");
-
-
-        setStatus(
-
-            "خطا در بارگذاری مدل: " +
-
-            (error.message || String(error)) +
-
-            " — اینترنت و حافظه گوشی را بررسی کن."
-
-        );
-
-
-        els.load.textContent =
-            "تلاش مجدد";
-
-    }
-
-    finally {
-
-        loading = false;
-
-        els.load.disabled = false;
-
-        els.send.disabled = false;
-
-        els.model.disabled = false;
-
-    }
-
-}
-
-
-/* ======================================
-   GENERATE AI RESPONSE
-====================================== */
-
-async function sendMessage() {
-
-    if (busy || loading) {
-        return;
-    }
-
-
-    const selected =
-
-        els.model.value === "coder"
-
-        ? MODEL_CODER
-
-        : MODEL_LIGHT;
 
 
     if (
 
-        !generator ||
-
-        currentModel !== selected
+        /^\s*<(?:!doctype\s+html|html)(?:\s|>)/i
+        .test(text)
 
     ) {
 
-        setStatus(
+        language = 'html';
 
-            "ابتدا مدل انتخاب‌شده را فعال کن."
+        ui.editor.value =
+            text.trim();
 
-        );
+        fileName();
 
-        return;
+        persist();
+
+    }
+
+}
+
+
+/* RESET WORKER */
+
+function resetWorker() {
+
+    if (worker) {
+
+        worker.terminate();
+
+        worker = null;
 
     }
 
 
-    const text =
-        els.prompt.value.trim();
+    if (workerURL) {
+
+        URL.revokeObjectURL(workerURL);
+
+        workerURL = null;
+
+    }
 
 
-    if (!text) {
+    ready = false;
+
+    loading = false;
+
+    busy = false;
+
+    selectedModel = '';
+
+
+    clearInterval(timer);
+
+    timer = null;
+
+
+    ui.connection.textContent =
+        'مدل بارگذاری نشده';
+
+
+    ui.connection.classList.remove(
+        'ready'
+    );
+
+
+    ui.load.textContent =
+        'فعال‌سازی هوش مصنوعی';
+
+
+    buttons();
+
+}
+
+
+/* LOAD MODEL */
+
+function loadModel() {
+
+    if (loading || busy) {
         return;
     }
 
 
-    busy = true;
+    resetWorker();
 
-    els.send.disabled = true;
+    loading = true;
 
-    els.load.disabled = true;
-
-    els.model.disabled = true;
+    ui.progress.style.width = '0%';
 
 
-    $("welcome").hidden = true;
+    ui.connection.textContent =
+        'در حال بارگذاری...';
 
 
-    message("user", text);
+    status(
 
-
-    els.prompt.value = "";
-
-
-    const previous = [...history];
-
-
-    history.push({
-
-        role: "user",
-
-        content: text
-
-    });
-
-
-    const outputBubble = message(
-
-        "ai",
-
-        "در حال تولید پاسخ..."
+        'در حال آماده‌سازی مدل؛ ' +
+        'ممکن است چند دقیقه طول بکشد.'
 
     );
 
 
-    setStatus(
-
-        "هوش مصنوعی با CPU گوشی " +
-
-        "در حال تولید کد است..."
-
-    );
+    buttons();
 
 
     try {
 
-        /* PREPARE CHAT MEMORY */
+        workerURL = URL.createObjectURL(
 
-        const conversation = history
+            new Blob(
 
-            .slice(-4)
-
-            .map(item => ({
-
-                role: item.role,
-
-                content: item.content.slice(0, 1800)
-
-            }));
-
-
-        /* INCLUDE EXISTING CODE
-           WHEN USER REQUESTS EDITS */
-
-        const editRequested =
-
-            /(اصلاح|تغییر|بروزرسان|باگ|خطا|fix|edit|modify)/i
-
-            .test(text);
-
-
-        if (
-
-            els.editor.value.trim() &&
-
-            editRequested
-
-        ) {
-
-            conversation[
-                conversation.length - 1
-            ] = {
-
-                role: "user",
-
-                content:
-
-                    "Current code:\n```" +
-
-                    language +
-
-                    "\n" +
-
-                    els.editor.value.slice(0, 2500) +
-
-                    "\n```\nRequest: " +
-
-                    text
-
-            };
-
-        }
-
-
-        /* ASK LOCAL AI */
-
-        const result = await generator(
-
-            [
+                [
+                    $('aiWorkerCode').textContent
+                ],
 
                 {
+                    type: 'text/javascript'
+                }
 
-                    role: "system",
+            )
 
-                    content: systemPrompt
+        );
 
-                },
 
-                ...conversation
+        const w = new Worker(
 
-            ],
+            workerURL,
 
             {
-
-                max_new_tokens:
-
-                    els.model.value === "coder"
-
-                    ? 420
-
-                    : 280,
-
-                do_sample: false,
-
-                return_full_text: true
-
+                type: 'module'
             }
 
         );
 
 
-        /* EXTRACT AI RESPONSE */
-
-        const generated =
-            result?.[0]?.generated_text;
+        worker = w;
 
 
-        const output =
+        w.onmessage = e => {
 
-            Array.isArray(generated)
+            if (worker !== w) {
+                return;
+            }
 
-            ? String(
+            onWorkerMessage(e.data);
 
-                generated[
-                    generated.length - 1
-                ]?.content || ""
-
-            )
-
-            : typeof generated === "string"
-
-                ? generated
-
-                : "";
+        };
 
 
-        if (!output.trim()) {
+        w.onerror = e => {
 
-            throw new Error(
+            if (worker !== w) {
+                return;
+            }
 
-                "مدل پاسخی تولید نکرد."
+
+            const msg =
+
+                e.message ||
+
+                'اجرای Worker در این مرورگر ناموفق بود.';
+
+
+            resetWorker();
+
+
+            status(
+
+                'خطای موتور هوش مصنوعی: ' +
+                msg
 
             );
 
-        }
+        };
 
 
-        outputBubble.textContent = output;
+        w.postMessage({
+
+            type: 'load',
+
+            model: ui.model.value
+
+        });
+
+    }
+
+    catch (e) {
+
+        resetWorker();
+
+        status(
+
+            'امکان ساخت Worker نیست: ' +
+            e.message
+
+        );
+
+    }
+
+}
+
+
+/* FINISH GENERATION */
+
+function finishBusy() {
+
+    busy = false;
+
+
+    clearInterval(timer);
+
+    timer = null;
+
+
+    currentAnswer = null;
+
+    buttons();
+
+}
+
+
+/* HANDLE WORKER MESSAGES */
+
+function onWorkerMessage(data) {
+
+    /* INFO */
+
+    if (data.type === 'info') {
+
+        status(data.text);
+
+        return;
+
+    }
+
+
+    /* PROGRESS */
+
+    if (data.type === 'progress') {
+
+        ui.progress.style.width =
+
+            Math.max(
+
+                0,
+
+                Math.min(
+                    100,
+                    data.percentage
+                )
+
+            ) + '%';
+
+
+        status(
+
+            'دانلود مدل: ' +
+
+            data.percentage +
+
+            '٪  ' +
+
+            (data.file || '')
+
+        );
+
+        return;
+
+    }
+
+
+    /* READY */
+
+    if (data.type === 'ready') {
+
+        loading = false;
+
+        ready = true;
+
+        selectedModel = data.model;
+
+
+        ui.progress.style.width =
+            '100%';
+
+
+        ui.connection.textContent =
+            '● هوش مصنوعی فعال است';
+
+
+        ui.connection.classList.add(
+            'ready'
+        );
+
+
+        ui.load.textContent =
+            'مدل فعال شد';
+
+
+        status(
+
+            'آماده است. ' +
+            'یک پیام کوتاه مثل «سلام» بفرست.'
+
+        );
+
+
+        buttons();
+
+        return;
+
+    }
+
+
+    /* GENERATION STARTED */
+
+    if (data.type === 'started') {
+
+        status(
+
+            'در حال تولید پاسخ روی CPU گوشی...'
+
+        );
+
+        return;
+
+    }
+
+
+    /* STREAMING RESPONSE */
+
+    if (
+
+        data.type === 'delta' &&
+
+        currentAnswer
+
+    ) {
+
+        currentAnswer.bubble.textContent +=
+            data.text;
 
 
         scrollDown();
 
+        return;
 
-        /* SAVE CHAT HISTORY */
+    }
+
+
+    /* RESPONSE COMPLETE */
+
+    if (data.type === 'done') {
+
+        if (!currentAnswer) {
+            return;
+        }
+
+
+        currentAnswer.bubble.textContent =
+            data.text;
+
 
         history.push({
 
-            role: "assistant",
+            role: 'assistant',
 
-            content: output
+            content: data.text
 
         });
 
 
-        /* UPDATE CODE EDITOR */
+        extractCode(data.text);
 
-        const hasCode =
-            extractCode(output);
+        persist();
 
 
-        if (hasCode) {
+        finishBusy();
 
-            setStatus(
 
-                "کد تولید شد. " +
+        status(
 
-                "تب ویرایشگر کد را باز کن."
+            'پاسخ دریافت شد. ' +
+
+            'برای دیدن کد، تب «ویرایشگر کد» را باز کن.'
+
+        );
+
+
+        scrollDown();
+
+        return;
+
+    }
+
+
+    /* ERRORS */
+
+    if (data.type === 'failed') {
+
+        if (data.phase === 'load') {
+
+            resetWorker();
+
+
+            status(
+
+                'مدل بارگذاری نشد: ' +
+
+                data.error
 
             );
 
@@ -1669,76 +1766,388 @@ async function sendMessage() {
 
         else {
 
-            setStatus(
+            if (currentAnswer) {
 
-                "پاسخ هوش مصنوعی دریافت شد."
+                currentAnswer.bubble.textContent =
+
+                    'خطا در تولید پاسخ: ' +
+
+                    data.error;
+
+            }
+
+
+            if (
+
+                history.at(-1)?.role === 'user'
+
+            ) {
+
+                history.pop();
+
+            }
+
+
+            finishBusy();
+
+            persist();
+
+
+            status(
+
+                'تولید پاسخ خطا داشت. ' +
+
+                'مدل سبک‌تر را امتحان کن.'
 
             );
 
         }
 
-
-        save();
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-
-        outputBubble.textContent =
-
-            "خطا در تولید پاسخ:\n" +
-
-            (error.message || String(error));
-
-
-        history = previous;
-
-
-        setStatus(
-
-            "تولید پاسخ ناموفق بود."
-
-        );
-
-
-        save();
-
-    }
-
-    finally {
-
-        busy = false;
-
-        els.send.disabled = false;
-
-        els.load.disabled = false;
-
-        els.model.disabled = false;
+        return;
 
     }
 
 }
 
 
-/* ======================================
-   RUN HTML CODE
-====================================== */
+/* SEND CHAT MESSAGE */
+
+function send() {
+
+    const text =
+        ui.input.value.trim();
+
+
+    if (
+
+        !text ||
+
+        busy ||
+
+        loading
+
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+
+        !ready ||
+
+        !worker ||
+
+        selectedModel !== ui.model.value
+
+    ) {
+
+        status(
+
+            'ابتدا دکمه فعال‌سازی ' +
+            'هوش مصنوعی را بزن.'
+
+        );
+
+        return;
+
+    }
+
+
+    /* DISPLAY USER MESSAGE */
+
+    ui.welcome.hidden = true;
+
+
+    message(
+        'user',
+        text
+    );
+
+
+    history.push({
+
+        role: 'user',
+
+        content: text
+
+    });
+
+
+    ui.input.value = '';
+
+    busy = true;
+
+    buttons();
+
+
+    /* AI RESPONSE PLACEHOLDER */
+
+    const bubble = message(
+
+        'ai',
+
+        'در حال فکر کردن...'
+
+    );
+
+
+    currentAnswer = {
+        bubble
+    };
+
+
+    bubble.textContent = '';
+
+
+    /* SYSTEM PROMPT */
+
+    const prompt = [
+
+        'You are MyCode AI, a concise coding assistant.',
+
+        'Answer in the user language.',
+
+        'For coding requests, provide real code in fenced markdown blocks.',
+
+        'Keep output short and correct.',
+
+        'Do not claim you tested it.'
+
+    ].join(' ');
+
+
+    /* CHAT HISTORY */
+
+    const messages = [
+
+        {
+
+            role: 'system',
+
+            content: prompt
+
+        },
+
+        ...history.slice(-4).map(
+
+            x => ({
+
+                role: x.role,
+
+                content:
+                    x.content.slice(0,900)
+
+            })
+
+        )
+
+    ];
+
+
+    /* START TIMER */
+
+    generationStart = Date.now();
+
+
+    status(
+        'در حال تولید پاسخ...'
+    );
+
+
+    timer = setInterval(() => {
+
+        if (busy) {
+
+            const elapsed = Math.round(
+
+                (Date.now() - generationStart) / 1000
+
+            );
+
+
+            status(
+
+                'در حال تولید پاسخ... ' +
+
+                elapsed +
+
+                ' ثانیه — با «توقف» می‌توانی لغو کنی.'
+
+            );
+
+        }
+
+    }, 1000);
+
+
+    persist();
+
+
+    /* SEND TO AI WORKER */
+
+    worker.postMessage({
+
+        type: 'generate',
+
+        messages,
+
+        maxTokens:
+
+            ui.model.value === 'light'
+
+            ? 80
+
+            : 220
+
+    });
+
+}
+
+
+/* STOP GENERATION */
+
+function stop() {
+
+    if (!busy) {
+        return;
+    }
+
+
+    if (currentAnswer) {
+
+        currentAnswer.bubble.textContent +=
+
+            '\n[تولید پاسخ متوقف شد]';
+
+    }
+
+
+    if (
+
+        history.at(-1)?.role === 'user'
+
+    ) {
+
+        history.pop();
+
+    }
+
+
+    resetWorker();
+
+    persist();
+
+
+    status(
+
+        'پردازش متوقف شد. ' +
+
+        'برای ادامه باید مدل را دوباره فعال کنی.'
+
+    );
+
+}
+
+
+/* NEW CHAT */
+
+function newChat() {
+
+    if (busy) {
+
+        status(
+
+            'ابتدا دکمه توقف را بزن.'
+
+        );
+
+        return;
+
+    }
+
+
+    history = [];
+
+    ui.messages.innerHTML = '';
+
+
+    message(
+
+        'ai',
+
+        'گفتگوی جدید آماده است. درخواستت را بنویس.'
+
+    );
+
+
+    ui.editor.value = '';
+
+    ui.preview.srcdoc = '';
+
+    language = 'html';
+
+
+    fileName();
+
+    persist();
+
+
+    status(
+
+        ready
+
+        ? 'گفتگوی جدید آماده است.'
+
+        : 'برای گفتگو ابتدا مدل را فعال کن.'
+
+    );
+
+}
+
+
+/* MOBILE TABS */
+
+function showTab(name) {
+
+    $('workspace').classList.toggle(
+
+        'show-code',
+
+        name === 'code'
+
+    );
+
+
+    $('chatTab').classList.toggle(
+
+        'active',
+
+        name === 'chat'
+
+    );
+
+
+    $('codeTab').classList.toggle(
+
+        'active',
+
+        name === 'code'
+
+    );
+
+}
+
+
+/* RUN HTML */
 
 function runCode() {
 
-    const code =
-        els.editor.value.trim();
+    if (!ui.editor.value.trim()) {
 
-
-    if (!code) {
-
-        setStatus(
-
-            "کدی برای اجرا وجود ندارد."
-
+        status(
+            'ابتدا کد وارد کن.'
         );
 
         return;
@@ -1748,15 +2157,13 @@ function runCode() {
 
     if (
 
-        language !== "html" &&
-
-        language !== "htm"
+        !['html','htm'].includes(language)
 
     ) {
 
-        setStatus(
+        status(
 
-            "در این نسخه فقط HTML اجرا می‌شود."
+            'پیش‌نمایش فقط برای HTML است.'
 
         );
 
@@ -1765,34 +2172,25 @@ function runCode() {
     }
 
 
-    els.preview.srcdoc = code;
+    ui.preview.srcdoc =
+        ui.editor.value;
 
 
-    setStatus(
-
-        "پیش‌نمایش HTML اجرا شد."
-
+    status(
+        'پیش‌نمایش HTML اجرا شد.'
     );
 
 }
 
 
-/* ======================================
-   DOWNLOAD GENERATED CODE
-====================================== */
+/* DOWNLOAD CODE */
 
-function downloadCode() {
+function download() {
 
-    const text =
-        els.editor.value;
+    if (!ui.editor.value.trim()) {
 
-
-    if (!text.trim()) {
-
-        setStatus(
-
-            "ابتدا یک کد تولید کن."
-
+        status(
+            'کدی برای دانلود نیست.'
         );
 
         return;
@@ -1800,17 +2198,12 @@ function downloadCode() {
     }
 
 
-    updateFileName();
-
-
     const blob = new Blob(
 
-        [text],
+        [ui.editor.value],
 
         {
-
-            type: "text/plain;charset=utf-8"
-
+            type: 'text/plain;charset=utf-8'
         }
 
     );
@@ -1820,24 +2213,21 @@ function downloadCode() {
         URL.createObjectURL(blob);
 
 
-    const link =
-        document.createElement("a");
+    const a =
+        document.createElement('a');
 
 
-    link.href = url;
+    a.href = url;
+
+    a.download =
+        ui.filename.textContent;
 
 
-    link.download =
-        els.title.textContent;
+    document.body.append(a);
 
+    a.click();
 
-    document.body.append(link);
-
-
-    link.click();
-
-
-    link.remove();
+    a.remove();
 
 
     setTimeout(() => {
@@ -1846,52 +2236,32 @@ function downloadCode() {
 
     }, 1000);
 
-
-    setStatus(
-
-        "فایل کد ذخیره شد."
-
-    );
-
 }
 
 
-/* ======================================
-   COPY CODE
-====================================== */
+/* COPY CODE */
 
-async function copyCode() {
-
-    const code =
-        els.editor.value;
-
-
-    if (!code.trim()) {
-
-        setStatus(
-            "کدی برای کپی وجود ندارد."
-        );
-
-        return;
-
-    }
-
+async function copy() {
 
     try {
 
-        await navigator.clipboard.writeText(code);
+        await navigator.clipboard.writeText(
+
+            ui.editor.value
+
+        );
 
 
-        setStatus(
-            "کد کپی شد."
+        status(
+            'کد کپی شد.'
         );
 
     }
 
-    catch (error) {
+    catch (e) {
 
-        setStatus(
-            "کپی ناموفق بود."
+        status(
+            'کپی ناموفق بود.'
         );
 
     }
@@ -1899,204 +2269,191 @@ async function copyCode() {
 }
 
 
-/* ======================================
-   NEW CHAT
-====================================== */
+/* BUTTON EVENTS */
 
-function clearChat() {
+ui.load.addEventListener(
 
-    if (busy || loading) {
-        return;
-    }
-
-
-    history = [];
-
-
-    els.messages.replaceChildren();
-
-
-    const welcome =
-        document.createElement("div");
-
-
-    welcome.className = "welcome";
-
-
-    welcome.textContent =
-
-        "گفتگوی جدید آماده است. " +
-
-        "درخواست برنامه‌نویسی خودت را بنویس.";
-
-
-    els.messages.append(welcome);
-
-
-    els.editor.value = "";
-
-
-    language = "html";
-
-
-    updateFileName();
-
-
-    els.preview.srcdoc = "";
-
-
-    save();
-
-
-    setStatus(
-
-        generator
-
-        ? "گفتگوی جدید آماده است."
-
-        : "ابتدا مدل را فعال کن."
-
-    );
-
-}
-
-
-/* ======================================
-   MOBILE TABS
-====================================== */
-
-function tab(name) {
-
-    $("workspace").classList.toggle(
-
-        "show-code",
-
-        name === "code"
-
-    );
-
-
-    $("chatTab").classList.toggle(
-
-        "active",
-
-        name === "chat"
-
-    );
-
-
-    $("codeTab").classList.toggle(
-
-        "active",
-
-        name === "code"
-
-    );
-
-}
-
-
-/* ======================================
-   BUTTON EVENTS
-====================================== */
-
-els.load.addEventListener(
-
-    "click",
+    'click',
 
     loadModel
 
 );
 
 
-els.send.addEventListener(
+ui.send.addEventListener(
 
-    "click",
+    'click',
 
-    sendMessage
+    send
 
 );
 
 
-$("runBtn").addEventListener(
+ui.stop.addEventListener(
 
-    "click",
+    'click',
+
+    stop
+
+);
+
+
+/* INPUT EVENTS */
+
+ui.input.addEventListener(
+
+    'input',
+
+    buttons
+
+);
+
+
+ui.input.addEventListener(
+
+    'keydown',
+
+    e => {
+
+        if (
+
+            e.key === 'Enter' &&
+
+            e.ctrlKey
+
+        ) {
+
+            e.preventDefault();
+
+            send();
+
+        }
+
+    }
+
+);
+
+
+/* MODEL CHANGED */
+
+ui.model.addEventListener(
+
+    'change',
+
+    () => {
+
+        if (worker) {
+
+            resetWorker();
+
+
+            status(
+
+                'مدل تغییر کرد. ' +
+
+                'دوباره «فعال‌سازی» را بزن.'
+
+            );
+
+        }
+
+    }
+
+);
+
+
+/* NEW CHAT EVENT */
+
+$('newChat').addEventListener(
+
+    'click',
+
+    newChat
+
+);
+
+
+/* TAB EVENTS */
+
+$('chatTab').addEventListener(
+
+    'click',
+
+    () => showTab('chat')
+
+);
+
+
+$('codeTab').addEventListener(
+
+    'click',
+
+    () => showTab('code')
+
+);
+
+
+/* CODE TOOLS */
+
+$('run').addEventListener(
+
+    'click',
 
     runCode
 
 );
 
 
-$("downloadBtn").addEventListener(
+$('download').addEventListener(
 
-    "click",
+    'click',
 
-    downloadCode
-
-);
-
-
-$("copyBtn").addEventListener(
-
-    "click",
-
-    copyCode
+    download
 
 );
 
 
-$("clearBtn").addEventListener(
+$('copy').addEventListener(
 
-    "click",
+    'click',
 
-    clearChat
-
-);
-
-
-/* ======================================
-   MOBILE NAVIGATION
-====================================== */
-
-$("chatTab").addEventListener(
-
-    "click",
-
-    () => tab("chat")
+    copy
 
 );
 
 
-$("codeTab").addEventListener(
+/* SAVE EDITOR */
 
-    "click",
+ui.editor.addEventListener(
 
-    () => tab("code")
+    'input',
+
+    persist
 
 );
 
 
-/* ======================================
-   SUGGESTIONS
-====================================== */
+/* SUGGESTION BUTTONS */
 
 document.querySelectorAll(
 
-    "[data-suggest]"
+    '[data-ask]'
 
-).forEach(button => {
+).forEach(b => {
 
-    button.addEventListener(
+    b.addEventListener(
 
-        "click",
+        'click',
 
         () => {
 
-            els.prompt.value =
-                button.dataset.suggest;
+            ui.input.value =
+                b.dataset.ask;
 
 
-            els.prompt.focus();
+            buttons();
+
+            ui.input.focus();
 
         }
 
@@ -2105,101 +2462,11 @@ document.querySelectorAll(
 });
 
 
-/* ======================================
-   KEYBOARD SHORTCUT
-====================================== */
-
-els.prompt.addEventListener(
-
-    "keydown",
-
-    event => {
-
-        if (
-
-            event.key === "Enter" &&
-
-            event.ctrlKey
-
-        ) {
-
-            event.preventDefault();
-
-            sendMessage();
-
-        }
-
-    }
-
-);
-
-
-/* ======================================
-   AUTO SAVE CODE
-====================================== */
-
-els.editor.addEventListener(
-
-    "input",
-
-    save
-
-);
-
-
-/* ======================================
-   MODEL SELECTION
-====================================== */
-
-els.model.addEventListener(
-
-    "change",
-
-    () => {
-
-        if (currentModel) {
-
-            els.connection.textContent =
-
-                "مدل جدید را فعال کن";
-
-
-            els.connection.classList.remove(
-
-                "ready"
-
-            );
-
-
-            setStatus(
-
-                "برای تغییر مدل، " +
-
-                "روی فعال‌سازی بزن."
-
-            );
-
-        }
-
-    }
-
-);
-
-
-/* ======================================
-   INITIALIZE APPLICATION
-====================================== */
+/* INITIALIZE */
 
 restore();
 
-
-setStatus(
-
-    "مدل را انتخاب کن و " +
-
-    "روی فعال‌سازی هوش مصنوعی بزن."
-
-);
+buttons();
 
 </script>
 
